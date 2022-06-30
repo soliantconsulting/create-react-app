@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.1.0](https://versions.soliantconsulting.com/swr/create-react-app/compare/v1.0.0...v1.1.0) (2022-06-30)
+
+
+### Features
+
+* **cdk:** update dependencies ([cbe61cc](https://versions.soliantconsulting.com/swr/create-react-app/commit/cbe61ccbb413dc9b7c164c9a240c1b9c58b3d7b0))
+
 # 1.0.0 (2022-04-01)
 
 
