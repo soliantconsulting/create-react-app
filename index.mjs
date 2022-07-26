@@ -32,7 +32,7 @@ const cli = meow(`
 
 const runCommand = async (cwd, command, args) => {
     return new Promise((resolve, reject) => {
-        const child = spawn(command, args, {cwd, stdio: 'inherit'});
+        const child = spawn(command, args, {cwd, stdio: 'inherit', shell: true});
 
         child.on('close', code => {
             if (code !== 0) {
@@ -247,7 +247,7 @@ const performReplacements = async (root, config) => {
     console.log();
     console.log(chalk.blue('Creating setup commit…'));
     await runCommand(root, 'git', ['add', '-A']);
-    await runCommand(root, 'git', ['commit', '-am', 'feat: project setup']);
+    await runCommand(root, 'git', ['commit', '-am', '"feat: project setup"']);
 
     console.log();
     console.log(chalk.green('Setup complete!'));
