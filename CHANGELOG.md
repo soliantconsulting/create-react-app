@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://versions.soliantconsulting.com/swr/create-react-app/compare/v1.1.0...v1.1.1) (2022-07-26)
+
+
+### Bug Fixes
+
+* quote commit message and open a shell for sub processes on windows ([6ebc3e8](https://versions.soliantconsulting.com/swr/create-react-app/commit/6ebc3e8d01088cf57d713f8af917e156f3d157b9))
+
 # [1.1.0](https://versions.soliantconsulting.com/swr/create-react-app/compare/v1.0.0...v1.1.0) (2022-06-30)
 
 
