@@ -30,7 +30,7 @@
       "prepare": "husky install"
    },
    "lint-staged": {
-      "*.ts": "eslint --cache --fix"
+      "*.{ts,tsx}": "eslint --cache --fix"
    },
    "dependencies": {
       "react": "^17.0.2",
