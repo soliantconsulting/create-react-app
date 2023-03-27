@@ -5,19 +5,22 @@ import '@fontsource/roboto/700.css';
 import {createTheme, CssBaseline} from '@mui/material';
 import {ThemeProvider} from '@mui/material/styles';
 import {StrictMode} from 'react';
-import {render} from 'react-dom';
+import {createRoot} from 'react-dom/client';
 import App from './App';
 
 const theme = createTheme();
+const container = document.getElementById('root');
 
-render(
-    (
-        <StrictMode>
-            <ThemeProvider theme={theme}>
-                <CssBaseline/>
-                <App/>
-            </ThemeProvider>
-        </StrictMode>
-    ),
-    document.getElementById('root')
-);
+if (!container) {
+    throw new Error('Root element missing');
+}
+
+const root = createRoot(container);
+root.render((
+    <StrictMode>
+        <ThemeProvider theme={theme}>
+            <CssBaseline/>
+            <App/>
+        </ThemeProvider>
+    </StrictMode>
+));
