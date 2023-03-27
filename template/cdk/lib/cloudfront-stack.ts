@@ -11,9 +11,16 @@ import {BucketDeployment, CacheControl, Source} from 'aws-cdk-lib/aws-s3-deploym
 import type {Construct} from 'constructs';
 import {copySync} from 'fs-extra';
 
+export type BuildEnv = {
+    /* eslint-disable @typescript-eslint/naming-convention */
+    VITE_APP_MY_VARIABLE : string;
+    /* eslint-enable @typescript-eslint/naming-convention */
+};
+
 type ServiceStackProps = StackProps & {
     certificateArn : string;
     domainName : string;
+    buildEnv : BuildEnv;
 };
 
 export class CloudfrontStack extends Stack {
@@ -50,10 +57,6 @@ export class CloudfrontStack extends Stack {
 
         new CfnOutput(this, 'DistributionDomainName', {value: distribution.domainName});
 
-        const buildEnv = {
-            // @todo insert your build env variables here. These should be passed in through the ServiceStackProps.
-        };
-
         const source = Source.asset(path.join(__dirname, '../../'), {
             exclude: ['cdk'],
             bundling: {
@@ -66,18 +69,16 @@ export class CloudfrontStack extends Stack {
                             cwd: path.join(__dirname, '../..'),
                             env: {
                                 ...process.env,
-                                ...buildEnv,
+                                ...props.buildEnv,
                             },
                         });
 
-                        copySync(path.join(__dirname, '../../dist'), outputDir, {
-                            recursive: true,
-                        });
+                        copySync(path.join(__dirname, '../../dist'), outputDir);
 
                         return true;
                     },
                 },
-                environment: buildEnv,
+                environment: props.buildEnv,
             },
             assetHashType: AssetHashType.OUTPUT,
         });

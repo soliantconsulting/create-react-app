@@ -46,12 +46,18 @@ export class CiCdStack extends Stack {
             env: {account: '{{ account-id }}', region: '{{ region }}'},
             certificateArn: '{{ uat-acm-certificate-arn }}',
             domainName: '{{ uat-domain-name }}',
+            buildEnv: {
+                VITE_APP_MY_VARIABLE: 'foo',
+            },
         }));
 
         pipeline.addStage(new AppStage(this, '{{ name }}-prod', {
             env: {account: '{{ account-id }}', region: '{{ region }}'},
             certificateArn: '{{ prod-acm-certificate-arn }}',
             domainName: '{{ prod-domain-name }}',
+            buildEnv: {
+                VITE_APP_MY_VARIABLE: 'bar',
+            },
         }), {
             pre: [
                 new ManualApprovalStep('PromoteToProd'),
