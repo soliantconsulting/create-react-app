@@ -1,0 +1,22 @@
+import { AppBar, Box, Toolbar, Typography } from "@mui/material";
+import type { ReactNode } from "react";
+import { Outlet } from "react-router-dom";
+
+const Layout = (): ReactNode => {
+    return (
+        <>
+            <AppBar position="static">
+                <Toolbar>
+                    <Typography variant="h6" component="div">
+                        {{appTitle}}
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+            <Box component="main" sx=\{{ py: 2 }}>
+                <Outlet />
+            </Box>
+        </>
+    );
+};
+
+export default Layout;

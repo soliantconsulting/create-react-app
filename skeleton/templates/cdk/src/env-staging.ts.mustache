@@ -1,0 +1,24 @@
+import { App } from "aws-cdk-lib";
+import "source-map-support/register.js";
+import { AppStack } from "./app-stack.js";
+
+const app = new App();
+
+new AppStack(app, "{{{appName}}}-staging", {
+    env: {
+        account: "{{{accountId}}}",
+        region: "{{{region}}}",
+    },
+    certificateArn: "{{{stagingCertificateArn}}}",
+    domainName: "{{{stagingDomainName}}}",
+    buildEnv: {
+        VITE_APP_API_ENDPOINT: "",
+{{#if (has features "auth0")}}
+        VITE_APP_AUTH0_DOMAIN: "",
+        VITE_APP_AUTH0_CLIENT_ID: "",
+        VITE_APP_AUTH0_AUDIENCE: "",
+{{/if}}
+    },
+});
+
+app.synth();

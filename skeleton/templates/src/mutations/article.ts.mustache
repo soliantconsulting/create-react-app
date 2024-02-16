@@ -1,0 +1,97 @@
+import useAuthenticatedFetch from "@hooks/useAuthenticatedFetch.ts";
+import type { articleAttributesSchema } from "@queries/article.ts";
+import { type UseMutationResult, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiUrl } from "@utils/api.ts";
+import { handleJsonApiError } from "jsonapi-zod-query";
+import type { z } from "zod";
+
+type CreateArticleValues = {
+    attributes: Omit<z.input<typeof articleAttributesSchema>, "createdAt">;
+};
+
+export const useCreateWorldMutation = (): UseMutationResult<void, Error, CreateArticleValues> => {
+{{#if (has features "auth0")}}
+    const fetch = useAuthenticatedFetch();
+{{/if}}
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (values) => {
+            const response = await fetch(apiUrl("/articles"), {
+                method: "POST",
+                body: JSON.stringify({ data: values }),
+                headers: {
+                    "Content-Type": "application/vnd.api+json",
+                },
+            });
+            await handleJsonApiError(response);
+        },
+        onSuccess: () => {
+            void queryClient.invalidateQueries({
+                queryKey: ["articles"],
+            });
+        },
+    });
+};
+
+type UpdateArticleValues = CreateArticleValues & {
+    id: string;
+};
+
+export const useUpdateArticleMutation = (): UseMutationResult<void, Error, UpdateArticleValues> => {
+{{#if (has features "auth0")}}
+    const fetch = useAuthenticatedFetch();
+{{/if}}
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (values) => {
+            const { id, ...rest } = values;
+
+            const response = await fetch(apiUrl(`/articles/${id}`), {
+                method: "PUT",
+                body: JSON.stringify(rest),
+                headers: {
+                    "Content-Type": "application/vnd.api+json",
+                },
+            });
+            await handleJsonApiError(response);
+        },
+        onSuccess: (_data, values) => {
+            void queryClient.invalidateQueries({
+                queryKey: ["articles"],
+            });
+            void queryClient.invalidateQueries({
+                queryKey: ["article", values.id],
+            });
+        },
+    });
+};
+
+type DeleteArticleValues = {
+    id: string;
+};
+
+export const useDeleteArticleMutation = (): UseMutationResult<void, Error, DeleteArticleValues> => {
+{{#if (has features "auth0")}}
+    const fetch = useAuthenticatedFetch();
+{{/if}}
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (values) => {
+            const response = await fetch(apiUrl(`/articles/${values.id}`), {
+                method: "DELETE",
+            });
+            await handleJsonApiError(response);
+        },
+        onSuccess: (_data, values) => {
+            void queryClient.invalidateQueries({
+                queryKey: ["articles"],
+            });
+            void queryClient.invalidateQueries({
+                queryKey: ["article", values.id],
+            });
+        },
+    });
+};

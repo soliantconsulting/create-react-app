@@ -1,5 +1,3 @@
-# Changelog
-
 # [1.2.0](https://versions.soliantconsulting.com/swr/create-react-app/compare/v1.1.1...v1.2.0) (2023-03-27)
 
 

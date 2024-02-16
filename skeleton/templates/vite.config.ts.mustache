@@ -1,0 +1,54 @@
+import react from "@vitejs/plugin-react-swc";
+import { visualizer } from "rollup-plugin-visualizer";
+import { defineConfig } from "vite";
+import favicons from "vite-plugin-hashed-favicons";
+import tsconfigPaths from "vite-tsconfig-paths";
+import { muteWarningsPlugin } from "./vite.mute-warnings.plugin.js";
+
+export default defineConfig({
+    plugins: [
+        react(),
+        tsconfigPaths(),
+        visualizer(),
+        favicons("./src/assets/favicon.svg", {
+            appName: "React App",
+            appDescription: "React App created from starter",
+            background: "#fff",
+            theme_color: "eeb300",
+            start_url: "/",
+        }),
+        // This plugin can be removed once https://github.com/vitejs/vite/issues/15012 is resolved
+        muteWarningsPlugin([
+            { code: "SOURCEMAP_ERROR", message: "Can't resolve original location of error" },
+        ]),
+    ],
+    build: {
+        sourcemap: true,
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    react: ["react", "react-dom", "react-router-dom", "react-confirm-hook"],
+                    mui: [
+                        "@mui/material",
+                        "@mui/lab",
+                        "@mui/icons-material",
+                        "material-ui-popup-state",
+                        "@emotion/react",
+                        "@emotion/styled",
+                    ],
+                    notistack: ["notistack"],
+                    query: ["@tanstack/react-query", "jsonapi-zod-query"],
+                    form: ["react-hook-form", "@hookform/resolvers", "mui-rhf-integration"],
+                    jsJoda: ["@js-joda/core"],
+                    zod: ["zod", "zod-joda"],
+{{#if (has features "auth0")}}
+                    auth: ["@auth0/auth0-react"],
+{{/if}}
+                },
+            },
+        },
+    },
+    server: {
+        port: 3010,
+    },
+});

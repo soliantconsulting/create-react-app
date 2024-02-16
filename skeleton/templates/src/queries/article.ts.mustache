@@ -1,0 +1,79 @@
+import useAuthenticatedFetch from "@hooks/useAuthenticatedFetch.ts";
+import { type UseQueryResult, keepPreviousData, useQuery } from "@tanstack/react-query";
+import { apiUrl } from "@utils/api.ts";
+import {
+    type PageParams,
+    createDataSelector,
+    createResourceCollectionSelector,
+    createResourceSelector,
+    handleJsonApiError,
+    injectPageParams,
+} from "jsonapi-zod-query";
+import { z } from "zod";
+import { zj } from "zod-joda";
+
+export const articleAttributesSchema = z.object({
+    title: z.string(),
+    content: z.string(),
+    createdAt: zj.zonedDateTime(),
+});
+
+const articleSelector = createDataSelector(
+    createResourceSelector({
+        type: "article",
+        attributesSchema: articleAttributesSchema,
+    }),
+);
+
+const articlesSelector = createResourceCollectionSelector({
+    type: "article",
+    attributesSchema: articleAttributesSchema.pick({
+        title: true,
+        createdAt: true,
+    }),
+});
+
+export type Article = ReturnType<typeof articleSelector>;
+export type PaginatedArticles = ReturnType<typeof articlesSelector>;
+export type ListArticle = PaginatedArticles["data"][number];
+
+// Fetch a single article by its ID
+export const useArticleQuery = (articleId: string): UseQueryResult<Article> => {
+{{#if (has features "auth0")}}
+    const fetch = useAuthenticatedFetch();
+
+{{/if}}
+    return useQuery({
+        queryKey: ["article", articleId],
+        queryFn: async ({ signal }) => {
+            const response = await fetch(apiUrl(`/articles/${articleId}`), { signal });
+            await handleJsonApiError(response);
+            return response.json();
+        },
+        select: articleSelector,
+    });
+};
+
+// Fetch a collection of worlds from and endpoint with pagination
+// For further details, check:
+// https://tanstack.com/query/v5/docs/framework/react/guides/paginated-queries
+export const useArticlesQuery = (pageParams?: PageParams): UseQueryResult<PaginatedArticles> => {
+{{#if (has features "auth0")}}
+    const fetch = useAuthenticatedFetch();
+
+{{/if}}
+    return useQuery({
+        queryKey: ["articles", { pageParams }],
+        queryFn: async ({ signal }) => {
+            const url = apiUrl("/articles");
+            url.searchParams.set("fields[article]", "title,createdAt");
+            injectPageParams(url, pageParams);
+
+            const response = await fetch(url, { signal });
+            await handleJsonApiError(response);
+            return response.json();
+        },
+        select: articlesSelector,
+        placeholderData: keepPreviousData,
+    });
+};

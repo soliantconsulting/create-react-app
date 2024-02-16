@@ -1,0 +1,27 @@
+import { App } from "aws-cdk-lib";
+import "source-map-support/register.js";
+import { AppStack } from "./app-stack.js";
+
+const app = new App();
+
+throw new Error("Production env not configured");
+
+// biome-ignore lint/correctness/noUnreachable: env not configured
+new AppStack(app, "{{{appName}}}-production", {
+    env: {
+        account: "{{{accountId}}}",
+        region: "{{{region}}}",
+    },
+    certificateArn: "",
+    domainName: "",
+    buildEnv: {
+        VITE_APP_API_ENDPOINT: "",
+{{#if (has features "auth0")}}
+        VITE_APP_AUTH0_DOMAIN: "",
+        VITE_APP_AUTH0_CLIENT_ID: "",
+        VITE_APP_AUTH0_AUDIENCE: "",
+{{/if}}
+    },
+});
+
+app.synth();
