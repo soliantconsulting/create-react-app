@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/soliantconsulting/create-react-app/compare/v1.2.0...v2.0.0) (2024-02-16)
+
+
+### Features
+
+* refactor for new best practices and utilize BitBucket pipelines ([e0a7a06](https://github.com/soliantconsulting/create-react-app/commit/e0a7a0665b89007c243dbe078fa56de5edd4e5ab))
+
+
+### BREAKING CHANGES
+
+* You now need to host git repository on BitBucket cloud.
+
 # [1.2.0](https://versions.soliantconsulting.com/swr/create-react-app/compare/v1.1.1...v1.2.0) (2023-03-27)
 
 
