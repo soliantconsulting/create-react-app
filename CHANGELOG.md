@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/soliantconsulting/create-react-app/compare/v2.0.0...v2.1.0) (2024-02-28)
+
+
+### Features
+
+* use BitBucket API for repository UUID retrieval ([3c1d721](https://github.com/soliantconsulting/create-react-app/commit/3c1d721bd54d7c88f2a2c6816c00d57c9c9e3fce))
+
 # [2.0.0](https://github.com/soliantconsulting/create-react-app/compare/v1.2.0...v2.0.0) (2024-02-16)
 
 
