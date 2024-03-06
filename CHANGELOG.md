@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/soliantconsulting/create-react-app/compare/v2.2.0...v2.3.0) (2024-03-06)
+
+
+### Features
+
+* enable bitbucket pipelines during setup ([266fad8](https://github.com/soliantconsulting/create-react-app/commit/266fad8d82fbb01699298470b3824fc150e01e65))
+
 # [2.2.0](https://github.com/soliantconsulting/create-react-app/compare/v2.1.0...v2.2.0) (2024-03-06)
 
 
