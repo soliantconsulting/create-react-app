@@ -171,11 +171,23 @@ const tasks = new Listr<Context>(
         {
             title: "Retrieve repository UUID",
             task: async (context): Promise<void> => {
-                const bitbucket = new BitBucketClient(context.bitbucketAccessToken);
-                context.repositoryUuid = await bitbucket.getRepositoryUuid(
+                const bitbucket = new BitBucketClient(
+                    context.bitbucketAccessToken,
                     context.workspace,
                     context.repository,
                 );
+                context.repositoryUuid = await bitbucket.getRepositoryUuid();
+            },
+        },
+        {
+            title: "Configure pipeline environments",
+            task: async (context): Promise<void> => {
+                const bitbucket = new BitBucketClient(
+                    context.bitbucketAccessToken,
+                    context.workspace,
+                    context.repository,
+                );
+                await bitbucket.enablePipeline();
             },
         },
         {
@@ -343,10 +355,7 @@ const tasks = new Listr<Context>(
 try {
     await tasks.run();
 
-    logger.log(
-        ListrLogLevels.COMPLETED,
-        "Project creation successful, you must run the pipeline manually once.",
-    );
+    logger.log(ListrLogLevels.COMPLETED, "Project creation successful.");
 } catch (error) {
     logger.log(ListrLogLevels.FAILED, error as string);
 }
