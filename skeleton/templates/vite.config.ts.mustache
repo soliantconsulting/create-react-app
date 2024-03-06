@@ -3,7 +3,6 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import favicons from "vite-plugin-hashed-favicons";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { muteWarningsPlugin } from "./vite.mute-warnings.plugin.js";
 
 export default defineConfig({
     plugins: [
@@ -17,10 +16,6 @@ export default defineConfig({
             theme_color: "eeb300",
             start_url: "/",
         }),
-        // This plugin can be removed once https://github.com/vitejs/vite/issues/15012 is resolved
-        muteWarningsPlugin([
-            { code: "SOURCEMAP_ERROR", message: "Can't resolve original location of error" },
-        ]),
     ],
     build: {
         sourcemap: true,
@@ -45,6 +40,14 @@ export default defineConfig({
                     auth: ["@auth0/auth0-react"],
 {{/if}}
                 },
+            },
+            // @see https://github.com/vitejs/vite/issues/15012
+            onwarn(warning, defaultHandler) {
+                if (warning.code === 'SOURCEMAP_ERROR') {
+                    return;
+                }
+
+                defaultHandler(warning)
             },
         },
     },
