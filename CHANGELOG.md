@@ -1,3 +1,17 @@
+# [2.2.0](https://github.com/soliantconsulting/create-react-app/compare/v2.1.0...v2.2.0) (2024-03-06)
+
+
+### Bug Fixes
+
+* run commitlint without bash ([44bbbd8](https://github.com/soliantconsulting/create-react-app/commit/44bbbd8f8da13d68ed9f0fd1223e5401142bbb67))
+
+
+### Features
+
+* replace mute plugin with simpler rollup hook ([f914411](https://github.com/soliantconsulting/create-react-app/commit/f914411879bd3a5a6f83ab29012e9074c5e613d5))
+* **skeleton:** use appTitle for manifest.json appName ([bb85dc7](https://github.com/soliantconsulting/create-react-app/commit/bb85dc70df697a84fc6e20c1b17576aefc1ee1c1))
+* **skeleton:** use simpler path mapping for resolution ([936b17f](https://github.com/soliantconsulting/create-react-app/commit/936b17f75ebc09b9548d359a2b04a74fc89c2f95))
+
 # [2.1.0](https://github.com/soliantconsulting/create-react-app/compare/v2.0.0...v2.1.0) (2024-02-28)
 
 
