@@ -1,7 +1,7 @@
-import useAuthenticatedFetch from "@hooks/useAuthenticatedFetch.ts";
-import type { articleAttributesSchema } from "@queries/article.ts";
+import useAuthenticatedFetch from "@/hooks/useAuthenticatedFetch.ts";
+import type { articleAttributesSchema } from "@/queries/article.ts";
 import { type UseMutationResult, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiUrl } from "@utils/api.ts";
+import { apiUrl } from "@/utils/api.ts";
 import { handleJsonApiError } from "jsonapi-zod-query";
 import type { z } from "zod";
 

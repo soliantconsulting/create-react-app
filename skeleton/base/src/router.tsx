@@ -1,6 +1,6 @@
-import Layout from "@components/Layout/index.ts";
-import RootErrorBoundary from "@components/RootErrorBoundary/index.ts";
-import HomePage from "@pages/HomePage/index.ts";
+import Layout from "@/components/Layout/index.ts";
+import RootErrorBoundary from "@/components/RootErrorBoundary/index.ts";
+import HomePage from "@/pages/HomePage/index.ts";
 import { Outlet, type RouteObject, createBrowserRouter } from "react-router-dom";
 
 const pathRoutes: RouteObject[] = [

@@ -6,26 +6,8 @@
       "strict": true,
       "noImplicitAny": true,
       "paths": {
-         "@assets/*": [
-            "./src/assets/*"
-         ],
-         "@components/*": [
-            "./src/components/*"
-         ],
-         "@hooks/*": [
-            "./src/hooks/*"
-         ],
-         "@mutations/*": [
-            "./src/mutations/*"
-         ],
-         "@pages/*": [
-            "./src/pages/*"
-         ],
-         "@queries/*": [
-            "./src/queries/*"
-         ],
-         "@utils/*": [
-            "./src/utils/*"
+         "@/*": [
+            "./src/*"
          ]
       }
    },

@@ -1,4 +1,4 @@
-import type { RenderDialogProps } from "@components/DialogController/index.ts";
+import type { RenderDialogProps } from "@/components/DialogController/index.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from "@mui/material";
 import { RhfTextField } from "mui-rhf-integration";

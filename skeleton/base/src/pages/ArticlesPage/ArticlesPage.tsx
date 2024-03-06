@@ -1,6 +1,6 @@
-import DialogController from "@components/DialogController/index.ts";
+import DialogController from "@/components/DialogController/index.ts";
+import { useArticlesQuery } from "@/queries/article.ts";
 import { Button, ButtonGroup, Container, LinearProgress, List, Typography } from "@mui/material";
-import { useArticlesQuery } from "@queries/article.ts";
 import type { PageParams } from "jsonapi-zod-query";
 import type { ReactNode } from "react";
 import { useState } from "react";

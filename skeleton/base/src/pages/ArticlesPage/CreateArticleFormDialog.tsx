@@ -1,5 +1,5 @@
-import type { RenderDialogProps } from "@components/DialogController/index.ts";
-import { useCreateWorldMutation } from "@mutations/article.ts";
+import type { RenderDialogProps } from "@/components/DialogController/index.ts";
+import { useCreateWorldMutation } from "@/mutations/article.ts";
 import { useSnackbar } from "notistack";
 import type { ReactNode } from "react";
 import ArticleFormDialog, { type ArticleFormValues } from "./ArticleFormDialog.tsx";

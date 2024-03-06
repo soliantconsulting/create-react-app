@@ -1,7 +1,7 @@
-import type { RenderDialogProps } from "@components/DialogController/index.ts";
+import type { RenderDialogProps } from "@/components/DialogController/index.ts";
+import { useUpdateArticleMutation } from "@/mutations/article.ts";
+import { useArticleQuery } from "@/queries/article.ts";
 import { Backdrop, CircularProgress } from "@mui/material";
-import { useUpdateArticleMutation } from "@mutations/article.ts";
-import { useArticleQuery } from "@queries/article.ts";
 import { useSnackbar } from "notistack";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
