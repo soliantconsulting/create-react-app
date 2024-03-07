@@ -1,3 +1,10 @@
+## [2.3.1](https://github.com/soliantconsulting/create-react-app/compare/v2.3.0...v2.3.1) (2024-03-07)
+
+
+### Bug Fixes
+
+* **skeleton:** remove legacy favicon dependency ([08eefdd](https://github.com/soliantconsulting/create-react-app/commit/08eefddd43d1b2e44017c6cce030daab45e4488d))
+
 # [2.3.0](https://github.com/soliantconsulting/create-react-app/compare/v2.2.0...v2.3.0) (2024-03-06)
 
 
