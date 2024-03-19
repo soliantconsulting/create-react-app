@@ -1,3 +1,10 @@
+# [2.4.0](https://github.com/soliantconsulting/create-react-app/compare/v2.3.1...v2.4.0) (2024-03-19)
+
+
+### Features
+
+* bump biome to 1.6.1 ([b335fe9](https://github.com/soliantconsulting/create-react-app/commit/b335fe9d11be4d5d912c68ee6b830327b9f84621))
+
 ## [2.3.1](https://github.com/soliantconsulting/create-react-app/compare/v2.3.0...v2.3.1) (2024-03-07)
 
 
