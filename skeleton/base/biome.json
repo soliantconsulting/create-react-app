@@ -1,36 +1,17 @@
 {
-    "$schema": "https://biomejs.dev/schemas/1.5.2/schema.json",
+    "$schema": "https://biomejs.dev/schemas/1.6.1/schema.json",
     "organizeImports": {
         "enabled": true
     },
     "files": {
-        "include": [
-            "biome.json",
-            "commitlint.config.cjs",
-            "ecosystem.config.cjs",
-            "vite.config.ts",
-            "vite.mute-warnings.plugin.ts",
-            "cdk/src/**/*",
-            "src/**/*"
-        ],
-        "ignore": ["cdk/cdk.out/**/*"]
+        "include": ["biome.json", "commitlint.config.cjs", "packages/*/src/**/*"]
     },
     "linter": {
         "enabled": true,
         "rules": {
             "recommended": true,
             "nursery": {
-                "noEmptyBlockStatements": "error",
-                "noEmptyTypeParameters": "error",
-                "noInvalidUseBeforeDeclaration": "error",
-                "noUnusedImports": "error",
-                "noUnusedPrivateClassMembers": "error",
-                "noUselessLoneBlockStatements": "error",
-                "noUselessTernary": "error",
-                "useExportType": "error",
-                "useImportType": "error",
-                "useForOf": "error",
-                "useGroupedTypeImport": "error"
+                "noUselessTernary": "error"
             },
             "complexity": {
                 "noExcessiveCognitiveComplexity": "warn",
@@ -38,11 +19,14 @@
             },
             "correctness": {
                 "noNewSymbol": "error",
+                "noUnusedImports": "error",
+                "noUnusedPrivateClassMembers": "error",
                 "useHookAtTopLevel": "error"
             },
             "style": {
                 "useBlockStatements": "error",
                 "useCollapsedElseIf": "error",
+                "useForOf": "error",
                 "useFragmentSyntax": "error",
                 "useShorthandArrayType": "error",
                 "useShorthandAssign": "error",
@@ -50,7 +34,8 @@
             },
             "suspicious": {
                 "noApproximativeNumericConstant": "warn",
-                "noConsoleLog": "error"
+                "noConsoleLog": "error",
+                "noEmptyBlockStatements": "error"
             }
         }
     },
