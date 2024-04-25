@@ -1,4 +1,3 @@
-import type { RenderDialogProps } from "@/components/DialogController/index.ts";
 import { useUpdateArticleMutation } from "@/mutations/article.ts";
 import { useArticleQuery } from "@/queries/article.ts";
 import { Backdrop, CircularProgress } from "@mui/material";
@@ -6,13 +5,14 @@ import { useSnackbar } from "notistack";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 import ArticleFormDialog, { type ArticleFormValues } from "./ArticleFormDialog.tsx";
+import type { ControlledDialogProps } from "@/hooks/useDialogController.tsx";
 
 type Props = {
     articleId: string;
-    DialogProps: RenderDialogProps;
+    dialogProps: ControlledDialogProps;
 };
 
-const EditArticleFormDialog = ({ articleId, DialogProps }: Props): ReactNode => {
+const EditArticleFormDialog = ({ articleId, dialogProps }: Props): ReactNode => {
     const { enqueueSnackbar } = useSnackbar();
     const articleQuery = useArticleQuery(articleId);
     const updateMutation = useUpdateArticleMutation();
@@ -29,7 +29,7 @@ const EditArticleFormDialog = ({ articleId, DialogProps }: Props): ReactNode => 
         }
 
         enqueueSnackbar("Article has been updated", { variant: "success" });
-        DialogProps.onClose();
+        dialogProps.onClose();
     };
 
     useEffect(() => {
@@ -60,7 +60,7 @@ const EditArticleFormDialog = ({ articleId, DialogProps }: Props): ReactNode => 
                 content: article.content,
             }}
             onSubmit={handleSubmit}
-            DialogProps={DialogProps}
+            DialogProps={dialogProps}
         />
     );
 };

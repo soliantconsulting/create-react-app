@@ -1,4 +1,3 @@
-import type { RenderDialogProps } from "@/components/DialogController/index.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from "@mui/material";
 import { RhfTextField } from "mui-rhf-integration";
@@ -6,6 +5,7 @@ import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { type DefaultValues, useForm } from "react-hook-form";
 import { z } from "zod";
+import type { ControlledDialogProps } from "@/hooks/useDialogController.tsx";
 
 const schema = z.object({
     title: z.string().trim().min(1),
@@ -20,10 +20,10 @@ type Props = {
     title: string;
     defaultValues?: DefaultValues<FieldValues>;
     onSubmit: (values: TransformedValues) => Promise<void>;
-    DialogProps: RenderDialogProps;
+    dialogProps: ControlledDialogProps;
 };
 
-const ArticleFormDialog = ({ title, defaultValues, onSubmit, DialogProps }: Props): ReactNode => {
+const ArticleFormDialog = ({ title, defaultValues, onSubmit, dialogProps }: Props): ReactNode => {
     const form = useForm<FieldValues, unknown, TransformedValues>({
         resolver: zodResolver(schema),
         defaultValues,
@@ -35,7 +35,7 @@ const ArticleFormDialog = ({ title, defaultValues, onSubmit, DialogProps }: Prop
 
     return (
         <Dialog
-            {...DialogProps}
+            {...dialogProps}
             PaperProps={{
                 component: "form",
                 onSubmit: form.handleSubmit(onSubmit),
@@ -52,7 +52,7 @@ const ArticleFormDialog = ({ title, defaultValues, onSubmit, DialogProps }: Prop
             </DialogContent>
 
             <DialogActions>
-                <Button color="secondary" onClick={DialogProps.onClose}>
+                <Button color="secondary" onClick={dialogProps.onClose}>
                     Cancel
                 </Button>
                 <Button type="submit">Save</Button>

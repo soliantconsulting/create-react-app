@@ -1,14 +1,14 @@
-import type { RenderDialogProps } from "@/components/DialogController/index.ts";
 import { useCreateWorldMutation } from "@/mutations/article.ts";
 import { useSnackbar } from "notistack";
 import type { ReactNode } from "react";
 import ArticleFormDialog, { type ArticleFormValues } from "./ArticleFormDialog.tsx";
+import type { ControlledDialogProps } from "@/hooks/useDialogController.tsx";
 
 type Props = {
-    DialogProps: RenderDialogProps;
+    dialogProps: ControlledDialogProps;
 };
 
-const CreateArticleFormDialog = ({ DialogProps }: Props): ReactNode => {
+const CreateArticleFormDialog = ({ dialogProps }: Props): ReactNode => {
     const { enqueueSnackbar } = useSnackbar();
     const createMutation = useCreateWorldMutation();
 
@@ -23,14 +23,14 @@ const CreateArticleFormDialog = ({ DialogProps }: Props): ReactNode => {
         }
 
         enqueueSnackbar("Article has been created", { variant: "success" });
-        DialogProps.onClose();
+        dialogProps.onClose();
     };
 
     return (
         <ArticleFormDialog
             title="Create article"
             onSubmit={handleSubmit}
-            DialogProps={DialogProps}
+            dialogProps={dialogProps}
         />
     );
 };

@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import ArticleListItem from "./ArticleListItem.tsx";
 import CreateArticleFormDialog from "./CreateArticleFormDialog.tsx";
+import useDialogController from "@/hooks/useDialogController.js";
 
 type PaginationButtonProps = {
     label: string;
@@ -85,16 +86,25 @@ const ArticleList = (): ReactNode => {
 };
 
 const ArticlesPage = (): ReactNode => {
+    const createDialogController = useDialogController();
+
     return (
         <Container>
             <Typography variant="h6" gutterBottom>
                 Articles
             </Typography>
 
-            <DialogController
-                controller={(props) => <Button {...props}>Create article</Button>}
-                dialog={(props) => <CreateArticleFormDialog DialogProps={props} />}
-            />
+            <Button
+                onClick={() => {
+                    createDialogController.open();
+                }}
+            >
+                Create article
+            </Button>
+
+            {createDialogController.mount && (
+                <CreateArticleFormDialog dialogProps={createDialogController.props} />
+            )}
 
             <ArticleList />
         </Container>
