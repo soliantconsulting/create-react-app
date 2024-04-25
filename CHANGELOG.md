@@ -1,3 +1,10 @@
+## [2.5.2](https://github.com/soliantconsulting/create-react-app/compare/v2.5.1...v2.5.2) (2024-04-25)
+
+
+### Bug Fixes
+
+* **skeleton:** remove unused Outlet ([2f7c038](https://github.com/soliantconsulting/create-react-app/commit/2f7c03881c2db7b65b9508c03fa2f95e1b054acc))
+
 ## [2.5.1](https://github.com/soliantconsulting/create-react-app/compare/v2.5.0...v2.5.1) (2024-04-25)
 
 
