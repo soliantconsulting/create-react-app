@@ -1,3 +1,10 @@
+## [2.5.1](https://github.com/soliantconsulting/create-react-app/compare/v2.5.0...v2.5.1) (2024-04-25)
+
+
+### Bug Fixes
+
+* **skeleton:** replace legacy dialog controller usages ([f07e0a5](https://github.com/soliantconsulting/create-react-app/commit/f07e0a501cc1a5344e4adf0cde2fc83e2f6387e1))
+
 # [2.5.0](https://github.com/soliantconsulting/create-react-app/compare/v2.4.0...v2.5.0) (2024-04-25)
 
 
