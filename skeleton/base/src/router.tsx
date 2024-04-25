@@ -13,14 +13,8 @@ const pathRoutes: RouteObject[] = [
 const rootRoute: RouteObject = {
     path: "/",
     element: <Layout />,
-    children: [
-        {
-            path: "",
-            element: <Outlet />,
-            errorElement: <RootErrorBoundary />,
-            children: pathRoutes,
-        },
-    ],
+    errorElement: <RootErrorBoundary />,
+    children: pathRoutes,
 };
 
 export const router = createBrowserRouter([rootRoute]);
