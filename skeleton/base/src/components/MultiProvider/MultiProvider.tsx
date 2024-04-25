@@ -7,10 +7,10 @@ type Props = {
     children: ReactNode;
 };
 
-const MultiProvider = (props: Props): ReactNode => {
-    let root = props.children;
+const MultiProvider = ({ providerCreators, children }: Props): ReactNode => {
+    let root = children;
 
-    for (const creator of props.providerCreators.reverse()) {
+    for (const creator of [...providerCreators].reverse()) {
         root = creator(root);
     }
 
