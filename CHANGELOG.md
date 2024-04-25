@@ -1,3 +1,17 @@
+# [2.5.0](https://github.com/soliantconsulting/create-react-app/compare/v2.4.0...v2.5.0) (2024-04-25)
+
+
+### Bug Fixes
+
+* **skeleton:** create a copy of provider creators before reversing ([f9dea56](https://github.com/soliantconsulting/create-react-app/commit/f9dea563a42f7719c7bd42dc41ab08c3d8b07f05))
+
+
+### Features
+
+* bump dependencies ([446659b](https://github.com/soliantconsulting/create-react-app/commit/446659bd68bb0ec3552b80e3b4e2e647041e6f13))
+* **skeleton:** introduce better error handling ([e030570](https://github.com/soliantconsulting/create-react-app/commit/e03057010aa614c63c34047f4bdfd920f4b028d1))
+* **skeleton:** replace dialog controller component with hook ([9fe4339](https://github.com/soliantconsulting/create-react-app/commit/9fe43393d032fa3a6f2b1c2a927f669a15ebb1df))
+
 # [2.4.0](https://github.com/soliantconsulting/create-react-app/compare/v2.3.1...v2.4.0) (2024-03-19)
 
 
