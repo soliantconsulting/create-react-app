@@ -60,7 +60,7 @@ const EditArticleFormDialog = ({ articleId, dialogProps }: Props): ReactNode => 
                 content: article.content,
             }}
             onSubmit={handleSubmit}
-            DialogProps={dialogProps}
+            dialogProps={dialogProps}
         />
     );
 };

@@ -1,4 +1,3 @@
-import DialogController from "@/components/DialogController/index.ts";
 import { useArticlesQuery } from "@/queries/article.ts";
 import { Button, ButtonGroup, Container, LinearProgress, List, Typography } from "@mui/material";
 import type { PageParams } from "jsonapi-zod-query";
@@ -103,7 +102,7 @@ const ArticlesPage = (): ReactNode => {
             </Button>
 
             {createDialogController.mount && (
-                <CreateArticleFormDialog dialogProps={createDialogController.props} />
+                <CreateArticleFormDialog dialogProps={createDialogController.dialogProps} />
             )}
 
             <ArticleList />
