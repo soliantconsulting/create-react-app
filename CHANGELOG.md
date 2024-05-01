@@ -1,3 +1,10 @@
+## [2.5.3](https://github.com/soliantconsulting/create-react-app/compare/v2.5.2...v2.5.3) (2024-05-01)
+
+
+### Bug Fixes
+
+* **skeleton:** use modified init in authenticated fetch ([76af087](https://github.com/soliantconsulting/create-react-app/commit/76af087f79b2d866c7702a5c63dd1ee8d4048380))
+
 ## [2.5.2](https://github.com/soliantconsulting/create-react-app/compare/v2.5.1...v2.5.2) (2024-04-25)
 
 
