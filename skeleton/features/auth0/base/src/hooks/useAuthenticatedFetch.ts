@@ -29,7 +29,7 @@ const useAuthenticatedFetch = (): typeof fetch => {
             modifiedInit.headers = new Headers(modifiedInit.headers);
             modifiedInit.headers.set("Authorization", `Bearer ${accessToken}`);
 
-            return await fetch(input, init);
+            return await fetch(input, modifiedInit);
         },
         [getAccessTokenSilently, loginWithRedirect, location],
     );
