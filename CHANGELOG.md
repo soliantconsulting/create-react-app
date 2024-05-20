@@ -1,3 +1,10 @@
+# [2.6.0](https://github.com/soliantconsulting/create-react-app/compare/v2.5.3...v2.6.0) (2024-05-20)
+
+
+### Features
+
+* **skeleton:** bump dependencies ([11eafa8](https://github.com/soliantconsulting/create-react-app/commit/11eafa8dd9671034ed155adb81ba4b8a179b62e2))
+
 ## [2.5.3](https://github.com/soliantconsulting/create-react-app/compare/v2.5.2...v2.5.3) (2024-05-01)
 
 
