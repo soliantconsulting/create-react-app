@@ -1,3 +1,10 @@
+## [2.6.2](https://github.com/soliantconsulting/create-react-app/compare/v2.6.1...v2.6.2) (2025-01-14)
+
+
+### Bug Fixes
+
+* **skeleton:** exclude imports for auth0 when not being used ([e15e133](https://github.com/soliantconsulting/create-react-app/commit/e15e13335b39fc1ef4499188256f340d3b0384ca))
+
 ## [2.6.1](https://github.com/soliantconsulting/create-react-app/compare/v2.6.0...v2.6.1) (2025-01-14)
 
 
