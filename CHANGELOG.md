@@ -1,3 +1,10 @@
+## [2.6.1](https://github.com/soliantconsulting/create-react-app/compare/v2.6.0...v2.6.1) (2025-01-14)
+
+
+### Bug Fixes
+
+* update dependencies ([7f33eed](https://github.com/soliantconsulting/create-react-app/commit/7f33eed10c71f22e9199894d3030f907d5255f94))
+
 # [2.6.0](https://github.com/soliantconsulting/create-react-app/compare/v2.5.3...v2.6.0) (2024-05-20)
 
 
