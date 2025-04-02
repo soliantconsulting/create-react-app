@@ -1,3 +1,10 @@
+# [2.7.0](https://github.com/soliantconsulting/create-react-app/compare/v2.6.2...v2.7.0) (2025-04-02)
+
+
+### Features
+
+* skeleton dependencies and implement @tanstack/router ([7af5c4c](https://github.com/soliantconsulting/create-react-app/commit/7af5c4c22bc2f598cb13e6d569e82ee4006758db))
+
 ## [2.6.2](https://github.com/soliantconsulting/create-react-app/compare/v2.6.1...v2.6.2) (2025-01-14)
 
 
