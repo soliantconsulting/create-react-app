@@ -1,3 +1,10 @@
+## [2.7.1](https://github.com/soliantconsulting/create-react-app/compare/v2.7.0...v2.7.1) (2025-04-02)
+
+
+### Bug Fixes
+
+* set chmod for ci-check.sh file on synth ([73dd572](https://github.com/soliantconsulting/create-react-app/commit/73dd5726b11b1cb5b4ebc6509aa101b95fa0c3b8))
+
 # [2.7.0](https://github.com/soliantconsulting/create-react-app/compare/v2.6.2...v2.7.0) (2025-04-02)
 
 
