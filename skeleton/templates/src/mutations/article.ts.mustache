@@ -28,8 +28,8 @@ export const useCreateWorldMutation = (): UseMutationResult<void, Error, CreateA
             });
             await handleJsonApiError(response);
         },
-        onSuccess: () => {
-            void queryClient.invalidateQueries({
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
                 queryKey: ["articles"],
             });
         },
@@ -59,13 +59,15 @@ export const useUpdateArticleMutation = (): UseMutationResult<void, Error, Updat
             });
             await handleJsonApiError(response);
         },
-        onSuccess: (_data, values) => {
-            void queryClient.invalidateQueries({
-                queryKey: ["articles"],
-            });
-            void queryClient.invalidateQueries({
-                queryKey: ["article", values.id],
-            });
+        onSuccess: async (_data, values) => {
+            await Promise.all([
+                queryClient.invalidateQueries({
+                    queryKey: ["articles"],
+                }),
+                queryClient.invalidateQueries({
+                    queryKey: ["article", values.id],
+                }),
+            ]);
         },
     });
 };
@@ -87,13 +89,15 @@ export const useDeleteArticleMutation = (): UseMutationResult<void, Error, Delet
             });
             await handleJsonApiError(response);
         },
-        onSuccess: (_data, values) => {
-            void queryClient.invalidateQueries({
-                queryKey: ["articles"],
-            });
-            void queryClient.invalidateQueries({
-                queryKey: ["article", values.id],
-            });
+        onSuccess: async (_data, values) => {
+            await Promise.all([
+                queryClient.invalidateQueries({
+                    queryKey: ["articles"],
+                }),
+                queryClient.invalidateQueries({
+                    queryKey: ["article", values.id],
+                }),
+            ]);
         },
     });
 };

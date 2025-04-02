@@ -1,21 +1,20 @@
 #!/usr/bin/env node
 
-import path from "path";
-import { fileURLToPath } from "url";
+import { stat } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { ACM, CertificateStatus } from "@aws-sdk/client-acm";
 import { STS } from "@aws-sdk/client-sts";
 import type { GetCallerIdentityResponse } from "@aws-sdk/client-sts/dist-types/models/models_0.js";
 import { ListrEnquirerPromptAdapter } from "@listr2/prompt-adapter-enquirer";
 import { getAccessToken } from "@soliantconsulting/bitbucket-cloud-cli-auth";
-import type { ExecaReturnValue } from "execa";
-import { stat } from "fs/promises";
 import { Listr, ListrLogLevels, ListrLogger } from "listr2";
 import meow from "meow";
 import semver from "semver/preload.js";
 import "source-map-support/register.js";
 import { BitBucketClient } from "./bitbucket.js";
 import { type Feature, synthProject } from "./synth.js";
-import { execute } from "./util.js";
+import { type ExecuteResult, execute } from "./util.js";
 
 const logger = new ListrLogger();
 
@@ -64,7 +63,7 @@ const tasks = new Listr<Context>(
         {
             title: "Check pnpm version",
             task: async (_context, task): Promise<void> => {
-                let result: ExecaReturnValue;
+                let result: ExecuteResult;
 
                 try {
                     result = await execute(task.stdout(), "pnpm", ["--version"]);

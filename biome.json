@@ -4,7 +4,8 @@
         "enabled": true
     },
     "files": {
-        "include": ["biome.json", "commitlint.config.cjs", "packages/*/src/**/*"]
+        "include": ["biome.json", "commitlint.config.cjs", "src/**/*"],
+        "ignore": ["routeTree.gen.ts"]
     },
     "linter": {
         "enabled": true,

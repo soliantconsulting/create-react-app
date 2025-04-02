@@ -1,14 +1,13 @@
 import ConfirmDialog from "@/components/ConfirmDialog/index.ts";
 import { useDeleteArticleMutation } from "@/mutations/article.ts";
-import EditArticleFormDialog from "@/pages/ArticlesPage/EditArticleFormDialog.tsx";
 import type { ListArticle } from "@/queries/article.ts";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { IconButton, ListItem, ListItemText, Menu, MenuItem } from "@mui/material";
+import { useNavigate } from "@tanstack/react-router";
 import { bindMenu, bindTrigger, usePopupState } from "material-ui-popup-state/hooks";
 import { useSnackbar } from "notistack";
 import type { ReactNode } from "react";
 import { useConfirm } from "react-confirm-hook";
-import useDialogController from "@/hooks/useDialogController.js";
 
 type Props = {
     article: ListArticle;
@@ -22,7 +21,7 @@ const ArticleListItem = ({ article }: Props): ReactNode => {
     const deleteMutation = useDeleteArticleMutation();
     const { enqueueSnackbar } = useSnackbar();
     const confirm = useConfirm(ConfirmDialog);
-    const editDialogController = useDialogController();
+    const navigate = useNavigate();
 
     const handleDelete = () => {
         confirm({
@@ -51,7 +50,10 @@ const ArticleListItem = ({ article }: Props): ReactNode => {
                     <Menu {...bindMenu(popupState)}>
                         <MenuItem
                             onClick={() => {
-                                editDialogController.open();
+                                void navigate({
+                                    to: "/articles/$articleId/edit",
+                                    params: { articleId: article.id },
+                                });
                                 popupState.close();
                             }}
                         >
@@ -63,13 +65,6 @@ const ArticleListItem = ({ article }: Props): ReactNode => {
             }
         >
             <ListItemText>{article.title}</ListItemText>
-
-            {editDialogController.mount && (
-                <EditArticleFormDialog
-                    articleId={article.id}
-                    dialogProps={editDialogController.dialogProps}
-                />
-            )}
         </ListItem>
     );
 };

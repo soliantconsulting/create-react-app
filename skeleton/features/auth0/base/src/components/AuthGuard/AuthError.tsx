@@ -7,7 +7,7 @@ type Props = {
 
 const AuthError = ({ error }: Props): ReactNode => {
     return (
-        <Container sx={{ py: 2 }} maxWidth="sm">
+        <Container maxWidth="sm" sx={{ my: 2 }}>
             <Card>
                 <CardContent>
                     <Typography variant="h5" gutterBottom>
@@ -18,7 +18,13 @@ const AuthError = ({ error }: Props): ReactNode => {
                         We are unable to log you in. Please contact support.
                     </Typography>
 
-                    <Typography fontFamily="monospace">{error.message}</Typography>
+                    <Typography
+                        sx={{
+                            fontFamily: "monospace",
+                        }}
+                    >
+                        {error.message}
+                    </Typography>
                 </CardContent>
                 <CardActions>
                     <Button component="a" href="/">

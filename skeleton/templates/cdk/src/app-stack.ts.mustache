@@ -12,10 +12,9 @@ import {
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import {
     Distribution,
-    OriginAccessIdentity,
     ViewerProtocolPolicy,
 } from "aws-cdk-lib/aws-cloudfront";
-import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
+import { S3BucketOrigin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { BlockPublicAccess, Bucket } from "aws-cdk-lib/aws-s3";
 import { BucketDeployment, CacheControl, Source } from "aws-cdk-lib/aws-s3-deployment";
@@ -47,9 +46,6 @@ export class AppStack extends Stack {
             removalPolicy: RemovalPolicy.DESTROY,
         });
 
-        const originAccessIdentity = new OriginAccessIdentity(this, "OriginAccessIdentity");
-        websiteBucket.grantRead(originAccessIdentity);
-
         const certificate = Certificate.fromCertificateArn(
             this,
             "Certificate",
@@ -60,7 +56,7 @@ export class AppStack extends Stack {
             certificate,
             domainNames: [props.domainName],
             defaultBehavior: {
-                origin: new S3Origin(websiteBucket, { originAccessIdentity }),
+                origin: S3BucketOrigin.withOriginAccessControl(websiteBucket),
                 viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
             },
             defaultRootObject: "index.html",

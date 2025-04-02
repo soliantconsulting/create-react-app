@@ -20,9 +20,9 @@ const useAuthenticatedFetch = (): typeof fetch => {
                         returnTo: `${location.pathname}${location.search}${location.hash}`,
                     },
                 });
-                throw new AuthenticatedFetchError(
-                    "Refresh token missing, performing login redirect",
-                );
+                return new Promise(() => {
+                    // Will never resolve
+                });
             }
 
             const modifiedInit = init ?? {};

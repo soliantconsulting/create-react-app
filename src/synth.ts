@@ -1,7 +1,7 @@
-import path from "path";
-import { fileURLToPath } from "url";
+import { cp, mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import merge from "deepmerge";
-import { cp, mkdir, readFile, rename, writeFile } from "fs/promises";
 import { glob } from "glob";
 import Handlebars from "handlebars";
 import type { PackageJson, TSConfig } from "pkg-types";
@@ -147,20 +147,15 @@ export const synthProject = async (
     }
 
     await execute(context.stdout, "pnpm", ["install"], { cwd: projectPath });
-    await execute(context.stdout, "pnpm", ["exec", "biome", "check", ".", "--apply"], {
+    await execute(context.stdout, "pnpm", ["biome", "check", ".", "--write"], {
         cwd: projectPath,
     });
     await execute(context.stdout, "pnpm", ["install"], { cwd: path.join(projectPath, "cdk") });
-    await execute(context.stdout, "pnpm", ["run", "build"], { cwd: path.join(projectPath, "cdk") });
+    await execute(context.stdout, "pnpm", ["build"], { cwd: path.join(projectPath, "cdk") });
 
     if (synthCdk) {
-        await execute(
-            context.stdout,
-            "pnpm",
-            ["exec", "cdk", "synth", "--app", "dist/env-staging.js"],
-            {
-                cwd: path.join(projectPath, "cdk"),
-            },
-        );
+        await execute(context.stdout, "pnpm", ["cdk", "synth", "--app", "dist/env-staging.js"], {
+            cwd: path.join(projectPath, "cdk"),
+        });
     }
 };

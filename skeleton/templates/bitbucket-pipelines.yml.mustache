@@ -1,4 +1,4 @@
-image: node:20
+image: public.ecr.aws/docker/library/node:22
 
 definitions:
   caches:
@@ -9,28 +9,16 @@ definitions:
           - cdk/pnpm-lock.yaml
       path: $BITBUCKET_CLONE_DIR/.pnpm-store
   steps:
-    - step: &biome
-        name: Biome
+    - step: &check
+        name: Check
         runs-on:
           - 'self.hosted'
           - 'linux'
         script:
           - corepack enable
-          - corepack prepare pnpm@latest-8 --activate
           - pnpm install
-          - pnpm exec biome ci .
-        caches:
-          - pnpm
-    - step: &type-check-api
-        name: Type check API
-        runs-on:
-          - 'self.hosted'
-          - 'linux'
-        script:
-          - corepack enable
-          - corepack prepare pnpm@latest-8 --activate
-          - pnpm install
-          - pnpm exec tsc --noEmit
+          - pnpm --dir=./cdk install
+          - ./ci-check.sh
         caches:
           - pnpm
     - step: &deploy
@@ -48,20 +36,17 @@ definitions:
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
           # Install dependencies
           - corepack enable
-          - corepack prepare pnpm@latest-8 --activate
           - pnpm install
-          - cd cdk
-          - pnpm install
+          - pnpm --dir=./cdk install
           # Deploy with CDK
-          - pnpm exec cdk deploy --app dist/env-$BITBUCKET_DEPLOYMENT_ENVIRONMENT.js --require-approval never
+          - pnpm --dir=./cdk cdk deploy --app dist/env-$BITBUCKET_DEPLOYMENT_ENVIRONMENT.js --require-approval never
 
 pipelines:
   branches:
     main:
       - parallel:
           steps:
-            - step: *biome
-            - step: *type-check-api
+            - step: *check
             - step:
                 name: Build CDK
                 runs-on:
@@ -69,9 +54,8 @@ pipelines:
                   - 'linux'
                 script:
                   - corepack enable
-                  - corepack prepare pnpm@latest-8 --activate
                   - cd cdk
-                  - CI=true pnpm install
+                  - pnpm install
                   - pnpm build
                 caches:
                   - pnpm
@@ -88,20 +72,4 @@ pipelines:
           trigger: manual
   pull-requests:
     '**':
-      - parallel:
-          steps:
-            - step: *biome
-            - step: *type-check-api
-            - step:
-                name: Type check CDK
-                runs-on:
-                  - 'self.hosted'
-                  - 'linux'
-                script:
-                  - corepack enable
-                  - corepack prepare pnpm@latest-8 --activate
-                  - cd cdk
-                  - CI=true pnpm install
-                  - pnpm exec tsc --noEmit
-                caches:
-                  - pnpm
+      - step: *check

@@ -1,11 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from "@mui/material";
+import { useNavigate } from "@tanstack/react-router";
 import { RhfTextField } from "mui-rhf-integration";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { type DefaultValues, useForm } from "react-hook-form";
 import { z } from "zod";
-import type { ControlledDialogProps } from "@/hooks/useDialogController.tsx";
+
+declare module "@mui/material" {
+    interface DialogPaperSlotPropsOverrides {
+        noValidate: boolean;
+    }
+}
 
 const schema = z.object({
     title: z.string().trim().min(1),
@@ -20,26 +26,33 @@ type Props = {
     title: string;
     defaultValues?: DefaultValues<FieldValues>;
     onSubmit: (values: TransformedValues) => Promise<void>;
-    dialogProps: ControlledDialogProps;
 };
 
-const ArticleFormDialog = ({ title, defaultValues, onSubmit, dialogProps }: Props): ReactNode => {
+const ArticleFormDialog = ({ title, defaultValues, onSubmit }: Props): ReactNode => {
     const form = useForm<FieldValues, unknown, TransformedValues>({
         resolver: zodResolver(schema),
         defaultValues,
     });
+    const navigate = useNavigate();
 
     useEffect(() => {
         form.reset(defaultValues, { keepDefaultValues: true });
     }, [form, defaultValues]);
 
+    const handleClose = () => {
+        void navigate({ to: "/articles", search: true });
+    };
+
     return (
         <Dialog
-            {...dialogProps}
-            PaperProps={{
-                component: "form",
-                onSubmit: form.handleSubmit(onSubmit),
-                noValidate: true,
+            open
+            onClose={handleClose}
+            slotProps={{
+                paper: {
+                    component: "form",
+                    onSubmit: form.handleSubmit(onSubmit),
+                    noValidate: true,
+                },
             }}
         >
             <DialogTitle>{title}</DialogTitle>
@@ -52,7 +65,7 @@ const ArticleFormDialog = ({ title, defaultValues, onSubmit, dialogProps }: Prop
             </DialogContent>
 
             <DialogActions>
-                <Button color="secondary" onClick={dialogProps.onClose}>
+                <Button color="secondary" onClick={handleClose}>
                     Cancel
                 </Button>
                 <Button type="submit">Save</Button>

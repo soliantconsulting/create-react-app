@@ -3,9 +3,17 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import favicons from "vite-plugin-hashed-favicons";
 import tsconfigPaths from "vite-tsconfig-paths";
+import TanStackRouterVite from "@tanstack/router-plugin/vite";
 
 export default defineConfig({
     plugins: [
+        TanStackRouterVite({
+            target: "react",
+            autoCodeSplitting: true,
+            routeFileIgnorePrefix: "-",
+            quoteStyle: "double",
+            semicolons: true,
+        }),
         react(),
         tsconfigPaths(),
         visualizer(),
