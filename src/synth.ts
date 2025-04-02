@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { chmod, cp, mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import merge from "deepmerge";
@@ -145,6 +145,8 @@ export const synthProject = async (
         const newPath = rmExtPath.replace(/\.rm-ext$/, "");
         await rename(rmExtPath, newPath);
     }
+
+    await chmod(path.join(projectPath, "ci-check.sh"), 0o744);
 
     await execute(context.stdout, "pnpm", ["install"], { cwd: projectPath });
     await execute(context.stdout, "pnpm", ["biome", "check", ".", "--write"], {
