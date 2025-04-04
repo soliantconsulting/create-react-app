@@ -1,3 +1,10 @@
+# [2.8.0](https://github.com/soliantconsulting/create-react-app/compare/v2.7.1...v2.8.0) (2025-04-04)
+
+
+### Features
+
+* move cdk build into deploy action ([146aa27](https://github.com/soliantconsulting/create-react-app/commit/146aa2720517b8ce3fdd65cf65cd2a47aeaf68b8))
+
 ## [2.7.1](https://github.com/soliantconsulting/create-react-app/compare/v2.7.0...v2.7.1) (2025-04-02)
 
 
