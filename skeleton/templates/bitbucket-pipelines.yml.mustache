@@ -37,30 +37,16 @@ definitions:
           # Install dependencies
           - corepack enable
           - pnpm install
-          - pnpm --dir=./cdk install
           # Deploy with CDK
-          - pnpm --dir=./cdk cdk deploy --app dist/env-$BITBUCKET_DEPLOYMENT_ENVIRONMENT.js --require-approval never
+          - cd cdk
+          - pnpm install
+          - pnpm build
+          - pnpm cdk deploy --app dist/env-$BITBUCKET_DEPLOYMENT_ENVIRONMENT.js --require-approval never
 
 pipelines:
   branches:
     main:
-      - parallel:
-          steps:
-            - step: *check
-            - step:
-                name: Build CDK
-                runs-on:
-                  - 'self.hosted'
-                  - 'linux'
-                script:
-                  - corepack enable
-                  - cd cdk
-                  - pnpm install
-                  - pnpm build
-                caches:
-                  - pnpm
-                artifacts:
-                  - cdk/dist/**
+      - step: *check
       - step:
           <<: *deploy
           name: Deploy Staging
