@@ -1,3 +1,10 @@
+# [2.9.0](https://github.com/soliantconsulting/create-react-app/compare/v2.8.0...v2.9.0) (2025-04-07)
+
+
+### Features
+
+* use new soliant starter lib ([ed65fd2](https://github.com/soliantconsulting/create-react-app/commit/ed65fd2cc503088169086a18feff8c09c149147f))
+
 # [2.8.0](https://github.com/soliantconsulting/create-react-app/compare/v2.7.1...v2.8.0) (2025-04-04)
 
 
