@@ -10,10 +10,10 @@
     "skeleton/**/*"
   ],
   "bin": {
-    "create-koa-api": "./dist/cli.js"
+    "create-react-app": "./dist/cli.js"
   },
   "scripts": {
-    "test-synth": "tsx src/test-cli.ts",
+    "test-synth": "rm -rf ./test-synth && tsx ./src/test-cli.ts test-synth",
     "build": "tsc",
     "format": "biome format . --write",
     "check": "biome check . --write"
@@ -23,31 +23,19 @@
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
     "@tsconfig/node22": "^22.0.1",
-    "@types/node": "^22.13.16",
-    "@types/semver": "^7.7.0",
-    "@types/source-map-support": "^0.5.10",
-    "lefthook": "^1.11.6",
+    "@types/node": "^22.14.0",
+    "lefthook": "^1.11.7",
     "pkg-types": "^2.1.0",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@aws-sdk/client-acm": "^3.777.0",
-    "@aws-sdk/client-cloudformation": "^3.777.0",
-    "@aws-sdk/client-sts": "^3.777.0",
+    "@aws-sdk/client-acm": "^3.782.0",
     "@listr2/prompt-adapter-enquirer": "^2.0.12",
-    "@soliantconsulting/bitbucket-cloud-cli-auth": "^1.0.0",
-    "@soliantconsulting/bitbucket-openid-connect": "^1.2.0",
-    "aws-cdk": "^2.1006.0",
-    "deepmerge": "^4.3.1",
+    "@soliantconsulting/starter-lib": "^1.2.0",
     "enquirer": "^2.4.1",
-    "execa": "^9.5.2",
-    "glob": "^11.0.1",
-    "handlebars": "^4.7.8",
     "listr2": "^8.2.5",
-    "meow": "^13.2.0",
-    "semver": "^7.7.1",
-    "source-map-support": "^0.5.21"
+    "meow": "^13.2.0"
   },
   "packageManager": "pnpm@8.15.6+sha256.01c01eeb990e379b31ef19c03e9d06a14afa5250b82e81303f88721c99ff2e6f"
 }

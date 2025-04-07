@@ -1,0 +1,128 @@
+import { execSync } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import {
+    AssetHashType,
+    CfnOutput,
+    DockerImage,
+    RemovalPolicy,
+    Stack,
+    type StackProps,
+} from "aws-cdk-lib";
+import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
+import {
+    Distribution,
+    ViewerProtocolPolicy,
+} from "aws-cdk-lib/aws-cloudfront";
+import { S3BucketOrigin } from "aws-cdk-lib/aws-cloudfront-origins";
+import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
+import { BlockPublicAccess, Bucket } from "aws-cdk-lib/aws-s3";
+import { BucketDeployment, CacheControl, Source } from "aws-cdk-lib/aws-s3-deployment";
+import type { Construct } from "constructs";
+import { copySync } from "fs-extra/esm";
+
+type BuildEnv = {
+    VITE_APP_API_ENDPOINT: string;
+    {%- if features contains "auth0" %}
+    VITE_APP_AUTH0_DOMAIN: string;
+    VITE_APP_AUTH0_CLIENT_ID: string;
+    VITE_APP_AUTH0_AUDIENCE: string;
+    {%- endif %}
+};
+
+type AppStackProps = StackProps & {
+    certificateArn: string;
+    domainName: string;
+    buildEnv: BuildEnv;
+};
+
+export class AppStack extends Stack {
+    public constructor(scope: Construct, id: string, props: AppStackProps) {
+        super(scope, id, props);
+
+        const websiteBucket = new Bucket(this, "WebsiteBucket", {
+            autoDeleteObjects: true,
+            blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+            removalPolicy: RemovalPolicy.DESTROY,
+        });
+
+        const certificate = Certificate.fromCertificateArn(
+            this,
+            "Certificate",
+            props.certificateArn,
+        );
+
+        const distribution = new Distribution(this, "Distribution", {
+            certificate,
+            domainNames: [props.domainName],
+            defaultBehavior: {
+                origin: S3BucketOrigin.withOriginAccessControl(websiteBucket),
+                viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+            },
+            defaultRootObject: "index.html",
+            errorResponses: [
+                {
+                    httpStatus: 404,
+                    responseHttpStatus: 200,
+                    responsePagePath: "/index.html",
+                },
+            ],
+        });
+
+        new CfnOutput(this, "DistributionDomainName", { value: distribution.domainName });
+
+        const sourcePath = fileURLToPath(new URL("../../", import.meta.url));
+        const source = Source.asset(sourcePath, {
+            exclude: ["cdk"],
+            bundling: {
+                image: DockerImage.fromRegistry("public.ecr.aws/docker/library/alpine:latest"),
+                command: ["sh", "-c", 'echo "Docker build not supported." && exit 1'],
+                local: {
+                    tryBundle: (outputDir: string): boolean => {
+                        execSync("pnpm build", {
+                            stdio: ["ignore", process.stderr, process.stdout],
+                            cwd: sourcePath,
+                            env: {
+                                ...process.env,
+                                ...props.buildEnv,
+                            },
+                        });
+
+                        copySync(path.join(sourcePath, "dist"), outputDir);
+
+                        return true;
+                    },
+                },
+                environment: props.buildEnv,
+            },
+            assetHashType: AssetHashType.OUTPUT,
+        });
+
+        const mutableFiles = ["index.html"];
+
+        const deploymentLogGroup = new LogGroup(this, "DeploymentLogGroup", {
+            retention: RetentionDays.ONE_WEEK,
+        });
+
+        new BucketDeployment(this, "BucketDeployment", {
+            destinationBucket: websiteBucket,
+            distribution,
+            logGroup: deploymentLogGroup,
+            prune: false,
+            exclude: mutableFiles,
+            cacheControl: [CacheControl.fromString("max-age=31536000,public,immutable")],
+            sources: [source],
+        });
+
+        new BucketDeployment(this, "HtmlBucketDeployment", {
+            destinationBucket: websiteBucket,
+            distribution,
+            logGroup: deploymentLogGroup,
+            prune: false,
+            exclude: ["*"],
+            include: mutableFiles,
+            cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
+            sources: [source],
+        });
+    }
+}
