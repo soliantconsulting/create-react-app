@@ -24,14 +24,14 @@
     "@commitlint/config-conventional": "^19.8.0",
     "@tsconfig/node22": "^22.0.1",
     "@types/node": "^22.14.0",
-    "lefthook": "^1.11.7",
+    "lefthook": "^1.11.8",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3"
   },
   "dependencies": {
     "@aws-sdk/client-acm": "^3.782.0",
     "@listr2/prompt-adapter-enquirer": "^2.0.12",
-    "@soliantconsulting/starter-lib": "^1.2.1",
+    "@soliantconsulting/starter-lib": "^1.2.3",
     "enquirer": "^2.4.1",
     "listr2": "^8.2.5"
   },
