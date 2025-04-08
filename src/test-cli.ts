@@ -18,7 +18,7 @@ type BaseContext = ProjectContext &
     StagingDomainContext;
 
 await runPipeline({
-    packageName: "@soliantconsulting/create-auth0-cicd",
+    packageName: "@soliantconsulting/create-react-app",
     tasks: [synthTask],
     baseContext: {
         project: {
