@@ -1,3 +1,10 @@
+## [2.9.1](https://github.com/soliantconsulting/create-react-app/compare/v2.9.0...v2.9.1) (2025-04-08)
+
+
+### Bug Fixes
+
+* **staging-domain:** retrieve correct aws env context ([7120f60](https://github.com/soliantconsulting/create-react-app/commit/7120f60cf5f2564e587091c16597108f79f4589d))
+
 # [2.9.0](https://github.com/soliantconsulting/create-react-app/compare/v2.8.0...v2.9.0) (2025-04-07)
 
 
