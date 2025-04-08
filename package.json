@@ -32,7 +32,7 @@
   "dependencies": {
     "@aws-sdk/client-acm": "^3.782.0",
     "@listr2/prompt-adapter-enquirer": "^2.0.12",
-    "@soliantconsulting/starter-lib": "^1.2.0",
+    "@soliantconsulting/starter-lib": "^1.2.1",
     "enquirer": "^2.4.1",
     "listr2": "^8.2.5",
     "meow": "^13.2.0"

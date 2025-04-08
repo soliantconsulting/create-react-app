@@ -12,8 +12,8 @@ dependencies:
     specifier: ^2.0.12
     version: 2.0.12(enquirer@2.4.1)
   '@soliantconsulting/starter-lib':
-    specifier: ^1.2.0
-    version: 1.2.0(aws-cdk-lib@2.188.0)
+    specifier: ^1.2.1
+    version: 1.2.1(aws-cdk-lib@2.188.0)
   enquirer:
     specifier: ^2.4.1
     version: 2.4.1
@@ -55,8 +55,8 @@ devDependencies:
 
 packages:
 
-  /@aws-cdk/asset-awscli-v1@2.2.230:
-    resolution: {integrity: sha512-kUnhKIYu42hqBa6a8x2/7o29ObpJgjYGQy28lZDq9awXyvpR62I2bRxrNKNR3uFUQz3ySuT9JXhGHhuZPdbnFw==}
+  /@aws-cdk/asset-awscli-v1@2.2.231:
+    resolution: {integrity: sha512-vPqD/K2pK/ALhU5r5Nafdc2nLB+LJKxNyxUmQnLsazU6AWDJfkqjHQx8m3J4Cjl2C3chQkIRMdzSDuXIlo43GA==}
     dev: false
 
   /@aws-cdk/asset-node-proxy-agent-v6@2.1.0:
@@ -158,7 +158,7 @@ packages:
       '@aws-sdk/client-cloudcontrol': 3.782.0
       '@aws-sdk/client-cloudformation': 3.782.0
       '@aws-sdk/client-cloudwatch-logs': 3.782.0
-      '@aws-sdk/client-codebuild': 3.782.0
+      '@aws-sdk/client-codebuild': 3.784.0
       '@aws-sdk/client-ec2': 3.783.0
       '@aws-sdk/client-ecr': 3.782.0
       '@aws-sdk/client-ecs': 3.782.0
@@ -520,8 +520,8 @@ packages:
       - aws-crt
     dev: false
 
-  /@aws-sdk/client-codebuild@3.782.0:
-    resolution: {integrity: sha512-CGWw4FbTHJNyEFwcOLt++44kkueMOKbBg87M/AQbnT4xAWStGE7+P6VMKn4ZRHMeEJjlJCngu4HhPIbKeLrxdQ==}
+  /@aws-sdk/client-codebuild@3.784.0:
+    resolution: {integrity: sha512-gjLEedMoebYQW6y1iNoe2+f2/waboFtNZ3lj8qMcXPozXK1wSHmCm9BQ1xfiWu9u1oSmUkTXgEXGWRSABO5trQ==}
     engines: {node: '>=18.0.0'}
     dependencies:
       '@aws-crypto/sha256-browser': 5.2.0
@@ -2848,8 +2848,8 @@ packages:
       - supports-color
     dev: false
 
-  /@soliantconsulting/starter-lib@1.2.0(aws-cdk-lib@2.188.0):
-    resolution: {integrity: sha512-UPb3bDjWLLXkVjSpES6zf/5jK1FNaqBNHWvR81/Z/atdrT1SIbVlecPfsZwYE059ezTkrRE+okDtjVJDX9Llhg==}
+  /@soliantconsulting/starter-lib@1.2.1(aws-cdk-lib@2.188.0):
+    resolution: {integrity: sha512-9ACTWP+Q7ytjNJDpY+vSaEdkdG7aXeu+1uiMBlfWdLgwIt/UVzBQGBfkuuEgyUsP7iRYuCeBPddDgcYOfXzwFQ==}
     peerDependencies:
       aws-cdk-lib: ^2.188.0
     dependencies:
@@ -3033,7 +3033,7 @@ packages:
     peerDependencies:
       constructs: ^10.0.0
     dependencies:
-      '@aws-cdk/asset-awscli-v1': 2.2.230
+      '@aws-cdk/asset-awscli-v1': 2.2.231
       '@aws-cdk/asset-node-proxy-agent-v6': 2.1.0
       '@aws-cdk/cloud-assembly-schema': 41.2.0
       constructs: 10.4.2
