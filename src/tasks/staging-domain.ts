@@ -1,10 +1,6 @@
 import { ACM, CertificateStatus } from "@aws-sdk/client-acm";
 import { ListrEnquirerPromptAdapter } from "@listr2/prompt-adapter-enquirer";
-import {
-    type AwsEnvContext,
-    type ProjectContext,
-    requireContext,
-} from "@soliantconsulting/starter-lib";
+import { type AwsEnvContext, requireContext } from "@soliantconsulting/starter-lib";
 import type { ListrTask } from "listr2";
 
 export type StagingDomainContext = {
@@ -14,13 +10,11 @@ export type StagingDomainContext = {
     } | null;
 };
 
-export const stagingDomainTask: ListrTask<
-    Partial<ProjectContext & AwsEnvContext & StagingDomainContext>
-> = {
+export const stagingDomainTask: ListrTask<Partial<AwsEnvContext & StagingDomainContext>> = {
     title: "Configure staging domain",
     task: async (context, task): Promise<void> => {
         const prompt = task.prompt(ListrEnquirerPromptAdapter);
-        const awsEnvContext = requireContext(context, "project");
+        const awsEnvContext = requireContext(context, "awsEnv");
 
         if (awsEnvContext === null) {
             context.stagingDomain = null;
