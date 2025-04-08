@@ -1,3 +1,10 @@
+## [2.9.3](https://github.com/soliantconsulting/create-react-app/compare/v2.9.2...v2.9.3) (2025-04-08)
+
+
+### Bug Fixes
+
+* update starter lib and move project task to front ([1a04571](https://github.com/soliantconsulting/create-react-app/commit/1a0457123fd160fdb449b3929d742b8c6ad4161a))
+
 ## [2.9.2](https://github.com/soliantconsulting/create-react-app/compare/v2.9.1...v2.9.2) (2025-04-08)
 
 
