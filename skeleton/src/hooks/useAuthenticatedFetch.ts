@@ -1,10 +1,8 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { useLocation } from "@tanstack/react-router";
 import { useCallback } from "react";
 
 const useAuthenticatedFetch = (): typeof fetch => {
     const { getAccessTokenSilently, loginWithRedirect } = useAuth0();
-    const location = useLocation();
 
     return useCallback(
         async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -13,6 +11,7 @@ const useAuthenticatedFetch = (): typeof fetch => {
             try {
                 accessToken = await getAccessTokenSilently();
             } catch {
+                const { location } = window;
                 await loginWithRedirect({
                     appState: {
                         returnTo: `${location.pathname}${location.search}${location.hash}`,
@@ -29,7 +28,7 @@ const useAuthenticatedFetch = (): typeof fetch => {
 
             return await fetch(input, modifiedInit);
         },
-        [getAccessTokenSilently, loginWithRedirect, location],
+        [getAccessTokenSilently, loginWithRedirect],
     );
 };
 
