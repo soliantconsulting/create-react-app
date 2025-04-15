@@ -1,3 +1,10 @@
+## [2.9.4](https://github.com/soliantconsulting/create-react-app/compare/v2.9.3...v2.9.4) (2025-04-15)
+
+
+### Bug Fixes
+
+* **skeleton:** do not use router hook inside useAuthenticatedFetch ([d9a1eac](https://github.com/soliantconsulting/create-react-app/commit/d9a1eac86a4c39f6cd00b6b597e980dba15747b4))
+
 ## [2.9.3](https://github.com/soliantconsulting/create-react-app/compare/v2.9.2...v2.9.3) (2025-04-08)
 
 
