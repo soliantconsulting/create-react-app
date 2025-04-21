@@ -1,3 +1,10 @@
+## [2.9.8](https://github.com/soliantconsulting/create-react-app/compare/v2.9.7...v2.9.8) (2025-04-21)
+
+
+### Bug Fixes
+
+* **skeleton:** increase bucket deployment memory limit to 1024mb ([49d6ef6](https://github.com/soliantconsulting/create-react-app/commit/49d6ef6c0f1b94b9ed6ca340a5b4b9766ad65fa7))
+
 ## [2.9.7](https://github.com/soliantconsulting/create-react-app/compare/v2.9.6...v2.9.7) (2025-04-21)
 
 
