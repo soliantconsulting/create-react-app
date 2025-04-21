@@ -98,7 +98,7 @@ export class AppStack extends Stack {
             assetHashType: AssetHashType.OUTPUT,
         });
 
-        const mutableFiles = ["index.html"];
+        const mutableFiles = ["index.html", "favicon.ico", "manifest.webmanifest"];
 
         const deploymentLogGroup = new LogGroup(this, "DeploymentLogGroup", {
             retention: RetentionDays.ONE_WEEK,
