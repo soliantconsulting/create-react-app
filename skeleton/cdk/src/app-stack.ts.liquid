@@ -12,6 +12,7 @@ import {
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import {
     Distribution,
+    ResponseHeadersPolicy,
     ViewerProtocolPolicy,
 } from "aws-cdk-lib/aws-cloudfront";
 import { S3BucketOrigin } from "aws-cdk-lib/aws-cloudfront-origins";
@@ -57,12 +58,18 @@ export class AppStack extends Stack {
             domainNames: [props.domainName],
             defaultBehavior: {
                 origin: S3BucketOrigin.withOriginAccessControl(websiteBucket),
+                responseHeadersPolicy: ResponseHeadersPolicy.SECURITY_HEADERS,
                 viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
             },
             defaultRootObject: "index.html",
             errorResponses: [
                 {
                     httpStatus: 404,
+                    responseHttpStatus: 200,
+                    responsePagePath: "/index.html",
+                },
+                {
+                    httpStatus: 403,
                     responseHttpStatus: 200,
                     responsePagePath: "/index.html",
                 },
