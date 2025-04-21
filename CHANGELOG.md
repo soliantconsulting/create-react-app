@@ -1,3 +1,10 @@
+## [2.9.7](https://github.com/soliantconsulting/create-react-app/compare/v2.9.6...v2.9.7) (2025-04-21)
+
+
+### Bug Fixes
+
+* **skeleton:** catch 403 errors for index.html redirects ([e7309f0](https://github.com/soliantconsulting/create-react-app/commit/e7309f019df4cd2739b314b0f325084b0482473e))
+
 ## [2.9.6](https://github.com/soliantconsulting/create-react-app/compare/v2.9.5...v2.9.6) (2025-04-21)
 
 
