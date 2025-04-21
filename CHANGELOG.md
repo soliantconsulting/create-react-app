@@ -1,3 +1,10 @@
+## [2.9.6](https://github.com/soliantconsulting/create-react-app/compare/v2.9.5...v2.9.6) (2025-04-21)
+
+
+### Bug Fixes
+
+* **skeleton:** add additional mutable files to cdk deployment ([d002aaa](https://github.com/soliantconsulting/create-react-app/commit/d002aaa04eeb563162430ff39e7be6dcdf19196d))
+
 ## [2.9.5](https://github.com/soliantconsulting/create-react-app/compare/v2.9.4...v2.9.5) (2025-04-21)
 
 
