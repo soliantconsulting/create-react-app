@@ -1,3 +1,10 @@
+## [2.9.5](https://github.com/soliantconsulting/create-react-app/compare/v2.9.4...v2.9.5) (2025-04-21)
+
+
+### Bug Fixes
+
+* **skeleton:** fix favicons plugin usage and add more link components ([b53ac8a](https://github.com/soliantconsulting/create-react-app/commit/b53ac8a73a379f46371ba944a4df4cb8886da9e7))
+
 ## [2.9.4](https://github.com/soliantconsulting/create-react-app/compare/v2.9.3...v2.9.4) (2025-04-15)
 
 
