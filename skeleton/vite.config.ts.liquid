@@ -17,20 +17,14 @@ export default defineConfig({
         react(),
         tsconfigPaths(),
         visualizer(),
-        favicons("./src/assets/favicon.svg", {
-            appName: "{{project.title}}",
-            appDescription: "React App created from starter",
-            background: "#fff",
-            theme_color: "eeb300",
-            start_url: "/",
-        }),
+        favicons("./src/assets/favicon.svg"),
     ],
     build: {
         sourcemap: true,
         rollupOptions: {
             output: {
                 manualChunks: {
-                    react: ["react", "react-dom", "react-router-dom", "react-confirm-hook"],
+                    react: ["react", "react-dom", "@tanstack/react-router", "react-confirm-hook"],
                     mui: [
                         "@mui/material",
                         "@mui/lab",
