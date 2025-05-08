@@ -1,3 +1,10 @@
+## [2.9.9](https://github.com/soliantconsulting/create-react-app/compare/v2.9.8...v2.9.9) (2025-05-08)
+
+
+### Bug Fixes
+
+* update starter lib ([9557298](https://github.com/soliantconsulting/create-react-app/commit/955729870113b7f974460980c53e4bb35b80bc46))
+
 ## [2.9.8](https://github.com/soliantconsulting/create-react-app/compare/v2.9.7...v2.9.8) (2025-04-21)
 
 
