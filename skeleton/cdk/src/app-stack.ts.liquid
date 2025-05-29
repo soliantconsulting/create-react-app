@@ -125,7 +125,6 @@ export class AppStack extends Stack {
 
         new BucketDeployment(this, "HtmlBucketDeployment", {
             destinationBucket: websiteBucket,
-            distribution,
             logGroup: deploymentLogGroup,
             prune: false,
             exclude: ["*"],
@@ -133,7 +132,6 @@ export class AppStack extends Stack {
             cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
             sources: [source],
             memoryLimit: 1024,
-            distributionPaths: mutableFiles.map((path) => `/${path}`),
         });
     }
 }
