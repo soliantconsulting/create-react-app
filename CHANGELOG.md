@@ -1,3 +1,10 @@
+# [2.10.0](https://github.com/soliantconsulting/create-react-app/compare/v2.9.9...v2.10.0) (2025-05-29)
+
+
+### Features
+
+* improve distribution invalidation ([1703820](https://github.com/soliantconsulting/create-react-app/commit/1703820ef3c87cf3396707215add9fe73248ee55))
+
 ## [2.9.9](https://github.com/soliantconsulting/create-react-app/compare/v2.9.8...v2.9.9) (2025-05-08)
 
 
