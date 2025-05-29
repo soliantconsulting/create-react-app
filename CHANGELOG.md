@@ -1,3 +1,10 @@
+# [2.11.0](https://github.com/soliantconsulting/create-react-app/compare/v2.10.0...v2.11.0) (2025-05-29)
+
+
+### Features
+
+* completely disable invalidation in distribution ([71ec4c9](https://github.com/soliantconsulting/create-react-app/commit/71ec4c91548edb82f102b8026cfbe4c886575bf4))
+
 # [2.10.0](https://github.com/soliantconsulting/create-react-app/compare/v2.9.9...v2.10.0) (2025-05-29)
 
 
