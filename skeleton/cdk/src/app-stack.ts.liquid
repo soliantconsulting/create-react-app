@@ -12,6 +12,7 @@ import {
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import {
     Distribution,
+    HttpVersion,
     ResponseHeadersPolicy,
     ViewerProtocolPolicy,
 } from "aws-cdk-lib/aws-cloudfront";
@@ -62,6 +63,7 @@ export class AppStack extends Stack {
                 viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
             },
             defaultRootObject: "index.html",
+            httpVersion: HttpVersion.HTTP2_AND_3,
             errorResponses: [
                 {
                     httpStatus: 404,
@@ -113,7 +115,6 @@ export class AppStack extends Stack {
 
         new BucketDeployment(this, "BucketDeployment", {
             destinationBucket: websiteBucket,
-            distribution,
             logGroup: deploymentLogGroup,
             prune: false,
             exclude: mutableFiles,
@@ -132,6 +133,7 @@ export class AppStack extends Stack {
             cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
             sources: [source],
             memoryLimit: 1024,
+            distributionPaths: mutableFiles.map((path) => `/${path}`),
         });
     }
 }
