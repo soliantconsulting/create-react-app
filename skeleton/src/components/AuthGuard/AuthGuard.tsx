@@ -1,7 +1,7 @@
-import FullPageSpinner from "@/components/FullPageSpinner/index.ts";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect } from "react";
 import type { ReactNode } from "react";
+import { useEffect } from "react";
+import FullPageSpinner from "@/components/FullPageSpinner/index.ts";
 import AuthError from "./AuthError.tsx";
 
 type Props = {

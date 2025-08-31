@@ -8,8 +8,8 @@ import {
     Divider,
     IconButton,
     type IconButtonProps,
-    Typography,
     styled,
+    Typography,
 } from "@mui/material";
 import type { ReactNode } from "react";
 import { useState } from "react";

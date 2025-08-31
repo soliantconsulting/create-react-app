@@ -1,10 +1,10 @@
-import { useUpdateArticleMutation } from "@/mutations/article.ts";
-import { useQueryOptionsFactory } from "@/queries";
 import { Backdrop, CircularProgress } from "@mui/material";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSnackbar } from "notistack";
 import type { ReactNode } from "react";
+import { useUpdateArticleMutation } from "@/mutations/article.ts";
+import { useQueryOptionsFactory } from "@/queries";
 import ArticleFormDialog, { type ArticleFormValues } from "../-components/ArticleFormDialog.tsx";
 
 const Root = (): ReactNode => {

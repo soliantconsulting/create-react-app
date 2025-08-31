@@ -1,7 +1,7 @@
-import { useCreateArticleMutation } from "@/mutations/article.ts";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSnackbar } from "notistack";
 import type { ReactNode } from "react";
+import { useCreateArticleMutation } from "@/mutations/article.ts";
 import ArticleFormDialog, { type ArticleFormValues } from "./-components/ArticleFormDialog.tsx";
 
 const Root = (): ReactNode => {
