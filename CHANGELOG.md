@@ -1,3 +1,10 @@
+# [2.12.0](https://github.com/soliantconsulting/create-react-app/compare/v2.11.0...v2.12.0) (2025-08-31)
+
+
+### Features
+
+* update dependencies and introduce temporal ([300a39b](https://github.com/soliantconsulting/create-react-app/commit/300a39b4e314d1f9d6c52375e43bda59d52a6024))
+
 # [2.11.0](https://github.com/soliantconsulting/create-react-app/compare/v2.10.0...v2.11.0) (2025-05-29)
 
 
