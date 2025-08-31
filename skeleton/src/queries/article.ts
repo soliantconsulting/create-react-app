@@ -1,39 +1,37 @@
-import { apiUrl } from "@/utils/api.ts";
-import { queryOptions } from "@tanstack/react-query";
 import {
-    type PageParams,
-    createDataSelector,
-    createResourceCollectionSelector,
-    createResourceSelector,
+    createDeserializer,
     handleJsonApiError,
     injectPageParams,
-} from "jsonapi-zod-query";
-import { z } from "zod";
-import { zj } from "zod-joda";
+    type PageParams,
+} from "@jsonapi-serde/client";
+import { queryOptions } from "@tanstack/react-query";
+import { z } from "zod/mini";
+import { zt } from "zod-temporal/mini";
+import { apiUrl } from "@/utils/api.ts";
 
 export const articleAttributesSchema = z.object({
     title: z.string(),
     content: z.string(),
-    createdAt: zj.zonedDateTime(),
+    createdAt: zt.offsetDateTime(),
 });
 
-const articleSelector = createDataSelector(
-    createResourceSelector({
-        type: "article",
-        attributesSchema: articleAttributesSchema,
-    }),
-);
-
-const articlesSelector = createResourceCollectionSelector({
+const deserializeArticle = createDeserializer({
     type: "article",
-    attributesSchema: articleAttributesSchema.pick({
+    cardinality: "one",
+    attributesSchema: articleAttributesSchema,
+});
+
+const deserializeArticles = createDeserializer({
+    type: "article",
+    cardinality: "many",
+    attributesSchema: z.pick(articleAttributesSchema, {
         title: true,
         createdAt: true,
     }),
 });
 
-export type Article = ReturnType<typeof articleSelector>;
-export type PaginatedArticles = ReturnType<typeof articlesSelector>;
+export type Article = ReturnType<typeof deserializeArticle>;
+export type PaginatedArticles = ReturnType<typeof deserializeArticles>;
 export type ListArticle = PaginatedArticles["data"][number];
 
 export type ListArticlesOptions = {
@@ -51,7 +49,7 @@ export const createArticleQueryOptionsFactory = (authFetch: typeof fetch) => ({
 
                 const response = await authFetch(url, { signal });
                 await handleJsonApiError(response);
-                return articlesSelector(await response.json());
+                return deserializeArticles(await response.json());
             },
         }),
     get: (articleId: string) =>
@@ -60,7 +58,7 @@ export const createArticleQueryOptionsFactory = (authFetch: typeof fetch) => ({
             queryFn: async ({ signal }) => {
                 const response = await authFetch(apiUrl(`/articles/${articleId}`), { signal });
                 await handleJsonApiError(response);
-                return articleSelector(await response.json());
+                return deserializeArticle(await response.json()).data;
             },
         }),
 });

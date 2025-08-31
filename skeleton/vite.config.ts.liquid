@@ -13,6 +13,14 @@ export default defineConfig({
             routeFileIgnorePrefix: "-",
             quoteStyle: "double",
             semicolons: true,
+            customScaffolding: {
+                routeTemplate: [
+                    '%%tsrImports%%',
+                    'import type { ReactNode } from "react";\n\n',
+                    'const Root = (): ReactNode => "Hello %%tsrPath%%!";\n\n',
+                    '%%tsrExportStart%%{\n component: Root\n }%%tsrExportEnd%%'
+                ].join("\n"),
+            },
         }),
         react(),
         tsconfigPaths(),
@@ -27,17 +35,16 @@ export default defineConfig({
                     react: ["react", "react-dom", "@tanstack/react-router", "react-confirm-hook"],
                     mui: [
                         "@mui/material",
-                        "@mui/lab",
                         "@mui/icons-material",
                         "material-ui-popup-state",
                         "@emotion/react",
                         "@emotion/styled",
                     ],
                     notistack: ["notistack"],
-                    query: ["@tanstack/react-query", "jsonapi-zod-query"],
+                    query: ["@tanstack/react-query", "@jsonapi-serde/client"],
                     form: ["react-hook-form", "@hookform/resolvers", "mui-rhf-integration"],
-                    jsJoda: ["@js-joda/core"],
-                    zod: ["zod", "zod-joda"],
+                    temporal: ["temporal-polyfill"],
+                    zod: ["zod", "zod-temporal"],
                     {%- if features contains "auth0" %}
                     auth: ["@auth0/auth0-react"],
                     {%- endif %}

@@ -1,6 +1,5 @@
-import { LocalDate, LocalDateTime, LocalTime, ZoneId, ZonedDateTime } from "@js-joda/core";
+import { JsonApiError } from "@jsonapi-serde/client";
 import { isPlainArray, isPlainObject } from "@tanstack/react-router";
-import { JsonApiError } from "jsonapi-zod-query";
 
 export const apiUrl = (path: string): URL => new URL(path, import.meta.env.VITE_APP_API_ENDPOINT);
 
@@ -10,20 +9,67 @@ export const getErrorMessage = (error: unknown): string => {
     }
 
     const jsonApiError = error.errors[0];
-
     return jsonApiError.detail ?? jsonApiError.title ?? "An unknown error occurred";
 };
 
-const isJsJodaObject = (
-    object: unknown,
-): object is LocalDate | LocalTime | LocalDateTime | ZonedDateTime | ZoneId => {
+type TemporalType =
+    | Temporal.PlainDate
+    | Temporal.PlainTime
+    | Temporal.PlainDateTime
+    | Temporal.ZonedDateTime
+    | Temporal.PlainMonthDay
+    | Temporal.PlainYearMonth
+    | Temporal.Instant
+    | Temporal.Duration;
+
+const isTemporal = (object: unknown): object is TemporalType => {
     return (
-        object instanceof LocalDate ||
-        object instanceof LocalTime ||
-        object instanceof LocalDateTime ||
-        object instanceof ZonedDateTime ||
-        object instanceof ZoneId
+        object instanceof Temporal.PlainDate ||
+        object instanceof Temporal.PlainTime ||
+        object instanceof Temporal.PlainDateTime ||
+        object instanceof Temporal.ZonedDateTime ||
+        object instanceof Temporal.PlainMonthDay ||
+        object instanceof Temporal.PlainYearMonth ||
+        object instanceof Temporal.Instant ||
+        object instanceof Temporal.Duration
     );
+};
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: low-level complexity
+const isTemporalEqual = (oldData: TemporalType, newData: TemporalType): boolean => {
+    if (oldData instanceof Temporal.PlainDate && newData instanceof Temporal.PlainDate) {
+        return oldData.equals(newData);
+    }
+
+    if (oldData instanceof Temporal.PlainTime && newData instanceof Temporal.PlainTime) {
+        return oldData.equals(newData);
+    }
+
+    if (oldData instanceof Temporal.PlainDateTime && newData instanceof Temporal.PlainDateTime) {
+        return oldData.equals(newData);
+    }
+
+    if (oldData instanceof Temporal.ZonedDateTime && newData instanceof Temporal.ZonedDateTime) {
+        return oldData.equals(newData);
+    }
+
+    if (oldData instanceof Temporal.PlainMonthDay && newData instanceof Temporal.PlainMonthDay) {
+        return oldData.equals(newData);
+    }
+
+    if (oldData instanceof Temporal.PlainYearMonth && newData instanceof Temporal.PlainYearMonth) {
+        return oldData.equals(newData);
+    }
+
+    if (oldData instanceof Temporal.Instant && newData instanceof Temporal.Instant) {
+        return oldData.equals(newData);
+    }
+
+    if (oldData instanceof Temporal.Duration && newData instanceof Temporal.Duration) {
+        return Temporal.Duration.compare(oldData, newData) === 0;
+    }
+
+    return false;
 };
 
 const areSetsEquals = (a: Set<unknown>, b: Set<unknown>): boolean => {
@@ -92,8 +138,8 @@ export const extendedReplaceEqualDeep = (oldData: unknown, newData: unknown): un
         return areSetsEquals(oldData, newData) ? oldData : newData;
     }
 
-    if (isJsJodaObject(oldData) && isJsJodaObject(newData)) {
-        return oldData.equals(newData) ? oldData : newData;
+    if (isTemporal(oldData) && isTemporal(newData)) {
+        return isTemporalEqual(oldData, newData) ? oldData : newData;
     }
 
     if (isPlainArray(oldData) && isPlainArray(newData)) {

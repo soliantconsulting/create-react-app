@@ -1,4 +1,3 @@
-import { LoadingButton } from "@mui/lab";
 import {
     Button,
     Dialog,
@@ -32,9 +31,9 @@ const ConfirmDialog = ({
             <Button autoFocus onClick={onCancel} disabled={isConfirming}>
                 No
             </Button>
-            <LoadingButton onClick={onConfirm} color="primary" loading={isConfirming}>
+            <Button onClick={onConfirm} color="primary" loading={isConfirming}>
                 Yes
-            </LoadingButton>
+            </Button>
         </DialogActions>
     </Dialog>
 );

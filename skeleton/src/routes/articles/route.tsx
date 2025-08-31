@@ -1,17 +1,18 @@
-import { ButtonLink } from "@/components/Link";
-import { useQueryOptionsFactory } from "@/queries";
+import { extractPageParams } from "@jsonapi-serde/client";
 import { ButtonGroup, Container, LinearProgress, List, Typography } from "@mui/material";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Outlet, createFileRoute } from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
-import type { ReactNode } from "react";
-import { z } from "zod";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { type ReactNode, useMemo } from "react";
+import { z } from "zod/mini";
+import { ButtonLink } from "@/components/Link";
+import { useQueryOptionsFactory } from "@/queries";
 import ArticleListItem from "./-components/ArticleListItem.tsx";
 
 const ArticleList = (): ReactNode => {
     const qof = useQueryOptionsFactory();
     const { pageParams } = Route.useSearch();
     const page = useSuspenseQuery(qof.article.list({ pageParams })).data;
+    const documentPageParams = useMemo(() => extractPageParams(page.links ?? {}), [page.links]);
 
     if (page.data.length === 0) {
         return <Typography>There are no articles.</Typography>;
@@ -25,19 +26,19 @@ const ArticleList = (): ReactNode => {
                 ))}
             </List>
 
-            {(page.pageParams.first || page.pageParams.last) && (
+            {(documentPageParams.first || documentPageParams.last) && (
                 <ButtonGroup variant="contained">
-                    {page.pageParams.first && (
-                        <ButtonLink to="." search={{ pageParams: page.pageParams.first }} />
+                    {documentPageParams.first && (
+                        <ButtonLink to="." search={{ pageParams: documentPageParams.first }} />
                     )}
-                    {page.pageParams.prev && (
-                        <ButtonLink to="." search={{ pageParams: page.pageParams.prev }} />
+                    {documentPageParams.prev && (
+                        <ButtonLink to="." search={{ pageParams: documentPageParams.prev }} />
                     )}
-                    {page.pageParams.next && (
-                        <ButtonLink to="." search={{ pageParams: page.pageParams.next }} />
+                    {documentPageParams.next && (
+                        <ButtonLink to="." search={{ pageParams: documentPageParams.next }} />
                     )}
-                    {page.pageParams.last && (
-                        <ButtonLink to="." search={{ pageParams: page.pageParams.last }} />
+                    {documentPageParams.last && (
+                        <ButtonLink to="." search={{ pageParams: documentPageParams.last }} />
                     )}
                 </ButtonGroup>
             )}
@@ -63,13 +64,13 @@ const Root = (): ReactNode => {
 };
 
 const articleSearchSchema = z.object({
-    pageParams: fallback(z.record(z.string()), {}).default({}),
+    pageParams: z._default(z.record(z.string(), z.string()), {}),
 });
 
 export const Route = createFileRoute("/articles")({
     component: Root,
     pendingComponent: LinearProgress,
-    validateSearch: zodValidator(articleSearchSchema),
+    validateSearch: articleSearchSchema,
     loaderDeps: ({ search: { pageParams } }) => ({ pageParams }),
     loader: async ({ context, deps }) => {
         await context.queryClient.ensureQueryData(context.qof.article.list(deps.pageParams));
