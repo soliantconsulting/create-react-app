@@ -1,3 +1,10 @@
+## [2.12.1](https://github.com/soliantconsulting/create-react-app/compare/v2.12.0...v2.12.1) (2025-09-01)
+
+
+### Bug Fixes
+
+* add yml to editorconfig ([ab89d65](https://github.com/soliantconsulting/create-react-app/commit/ab89d658b6e5965a35a8afab6ae8667eb850b48a))
+
 # [2.12.0](https://github.com/soliantconsulting/create-react-app/compare/v2.11.0...v2.12.0) (2025-08-31)
 
 
