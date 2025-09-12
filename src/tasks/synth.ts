@@ -27,8 +27,8 @@ export const synthTask = createSynthTask(
             }
 
             if (!context.features?.includes("auth0")) {
-                list.push("components/AuthGuard");
-                list.push("hooks/useAuthenticatedFetch.ts");
+                list.push("src/components/AuthGuard");
+                list.push("src/hooks/useAuthenticatedFetch.ts");
             }
 
             return list;
