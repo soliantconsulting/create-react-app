@@ -1,3 +1,10 @@
+## [2.12.2](https://github.com/soliantconsulting/create-react-app/compare/v2.12.1...v2.12.2) (2025-09-12)
+
+
+### Bug Fixes
+
+* **synth:** exclude auth files properly without auth0 feature ([7119e8d](https://github.com/soliantconsulting/create-react-app/commit/7119e8de9425f5eda1ca0fac866e324634942705))
+
 ## [2.12.1](https://github.com/soliantconsulting/create-react-app/compare/v2.12.0...v2.12.1) (2025-09-01)
 
 
