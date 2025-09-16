@@ -1,3 +1,10 @@
+## [2.12.3](https://github.com/soliantconsulting/create-react-app/compare/v2.12.2...v2.12.3) (2025-09-16)
+
+
+### Bug Fixes
+
+* **skeleton:** load temporal polyfill in index.html ([0ab96b9](https://github.com/soliantconsulting/create-react-app/commit/0ab96b9483108f0580bae7b93327f876ba533038))
+
 ## [2.12.2](https://github.com/soliantconsulting/create-react-app/compare/v2.12.1...v2.12.2) (2025-09-12)
 
 
