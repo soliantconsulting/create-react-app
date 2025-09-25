@@ -1,3 +1,10 @@
+## [2.12.4](https://github.com/soliantconsulting/create-react-app/compare/v2.12.3...v2.12.4) (2025-09-25)
+
+
+### Bug Fixes
+
+* **skeleton:** import temporal polyfill in separate entry file before main.tsx ([50d3822](https://github.com/soliantconsulting/create-react-app/commit/50d3822b95aaa8cd8a2487ebfcaf4396bdb84ae9))
+
 ## [2.12.3](https://github.com/soliantconsulting/create-react-app/compare/v2.12.2...v2.12.3) (2025-09-16)
 
 
