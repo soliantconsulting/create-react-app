@@ -21,7 +21,12 @@ export const useCreateArticleMutation = (): UseMutationResult<void, Error, Creat
         mutationFn: async (values) => {
             const response = await fetch(apiUrl("/articles"), {
                 method: "POST",
-                body: JSON.stringify({ data: values }),
+                body: JSON.stringify({
+                    data: {
+                        type: "article",
+                        ...values,
+                    },
+                }),
                 headers: {
                     "Content-Type": "application/vnd.api+json",
                 },
@@ -52,7 +57,13 @@ export const useUpdateArticleMutation = (): UseMutationResult<void, Error, Updat
 
             const response = await fetch(apiUrl(`/articles/${id}`), {
                 method: "PUT",
-                body: JSON.stringify(rest),
+                body: JSON.stringify({
+                    data: {
+                        type: "article",
+                        id,
+                        ...rest,
+                    },
+                }),
                 headers: {
                     "Content-Type": "application/vnd.api+json",
                 },
