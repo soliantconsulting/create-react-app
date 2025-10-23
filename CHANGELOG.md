@@ -1,3 +1,10 @@
+## [2.12.5](https://github.com/soliantconsulting/create-react-app/compare/v2.12.4...v2.12.5) (2025-10-23)
+
+
+### Bug Fixes
+
+* add provenance attestation ([754da3f](https://github.com/soliantconsulting/create-react-app/commit/754da3f48b93e7bac7b7dda1284d5125585929c2))
+
 ## [2.12.4](https://github.com/soliantconsulting/create-react-app/compare/v2.12.3...v2.12.4) (2025-09-25)
 
 
