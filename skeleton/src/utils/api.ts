@@ -114,8 +114,7 @@ const replaceObjectProperties = (
     const copy: Record<string, unknown> = {};
     let equalItems = 0;
 
-    for (let i = 0; i < newSize; ++i) {
-        const key = oldKeys[i];
+    for (const key of newKeys) {
         copy[key] = extendedReplaceEqualDeep(oldData[key], newData[key]);
 
         if (copy[key] === oldData[key]) {
