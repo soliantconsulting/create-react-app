@@ -1,3 +1,10 @@
+## [2.12.6](https://github.com/soliantconsulting/create-react-app/compare/v2.12.5...v2.12.6) (2026-03-04)
+
+
+### Bug Fixes
+
+* **skeleton:** iterate over new keys instead of old keys in replaceObjectProperties ([ea288c3](https://github.com/soliantconsulting/create-react-app/commit/ea288c32c530cf029ce4bb5794a39623bb512b52))
+
 ## [2.12.5](https://github.com/soliantconsulting/create-react-app/compare/v2.12.4...v2.12.5) (2025-10-23)
 
 
