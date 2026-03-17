@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSnackbar } from "notistack";
 import type { ReactNode } from "react";
-import { useCreateArticleMutation } from "@/mutations/article.ts";
-import ArticleFormDialog, { type ArticleFormValues } from "./-components/ArticleFormDialog.tsx";
+import { useCreateArticleMutation } from "#/mutations/article.js";
+import { ArticleFormDialog, type ArticleFormValues } from "./-components/ArticleFormDialog.js";
 
 const Root = (): ReactNode => {
     const { enqueueSnackbar } = useSnackbar();

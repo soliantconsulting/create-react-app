@@ -1,1 +1,1 @@
-export { default } from "./AuthGuard.tsx";
+export { AuthGuard } from "./AuthGuard.js";

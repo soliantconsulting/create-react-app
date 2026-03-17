@@ -5,7 +5,7 @@ type Props = {
     error: Error;
 };
 
-const AuthError = ({ error }: Props): ReactNode => {
+export const AuthError = ({ error }: Props): ReactNode => {
     return (
         <Container maxWidth="sm" sx={{ my: 2 }}>
             <Card>
@@ -36,4 +36,3 @@ const AuthError = ({ error }: Props): ReactNode => {
     );
 };
 
-export default AuthError;

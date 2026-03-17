@@ -6,5 +6,4 @@ const MuiMenuItemLinkComponent = React.forwardRef<HTMLAnchorElement, MuiMenuItem
     (props, ref) => <MuiMenuItem ref={ref} component="a" {...props} />,
 );
 
-const MenuItemLink = createLink(MuiMenuItemLinkComponent);
-export default MenuItemLink;
+export const MenuItemLink = createLink(MuiMenuItemLinkComponent);

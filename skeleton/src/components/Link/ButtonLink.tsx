@@ -6,5 +6,4 @@ const MuiButtonLinkComponent = React.forwardRef<HTMLAnchorElement, MuiButtonProp
     (props, ref) => <MuiButton ref={ref} component="a" {...props} />,
 );
 
-const ButtonLink = createLink(MuiButtonLinkComponent);
-export default ButtonLink;
+export const ButtonLink = createLink(MuiButtonLinkComponent);

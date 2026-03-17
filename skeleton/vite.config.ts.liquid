@@ -13,6 +13,7 @@ export default defineConfig({
             routeFileIgnorePrefix: "-",
             quoteStyle: "double",
             semicolons: true,
+            addExtensions: "js",
             customScaffolding: {
                 routeTemplate: [
                     '%%tsrImports%%',
@@ -32,7 +33,7 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks: {
-                    react: ["react", "react-dom", "@tanstack/react-router", "react-confirm-hook"],
+                    react: ["react", "react-dom", "@tanstack/react-router", "material-ui-confirm"],
                     mui: [
                         "@mui/material",
                         "@mui/icons-material",

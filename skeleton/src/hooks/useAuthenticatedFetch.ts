@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useCallback } from "react";
 
-const useAuthenticatedFetch = (): typeof fetch => {
+export const useAuthenticatedFetch = (): typeof fetch => {
     const { getAccessTokenSilently, loginWithRedirect } = useAuth0();
 
     return useCallback(
@@ -31,5 +31,3 @@ const useAuthenticatedFetch = (): typeof fetch => {
         [getAccessTokenSilently, loginWithRedirect],
     );
 };
-
-export default useAuthenticatedFetch;

@@ -1,9 +1,9 @@
 {%- if features contains "auth0" -%}
-import useAuthenticatedFetch from "@/hooks/useAuthenticatedFetch.ts";
+import { useAuthenticatedFetch } from "#/hooks/useAuthenticatedFetch.js";
 {%- endif %}
-import type { articleAttributesSchema } from "@/queries/article.ts";
+import type { articleAttributesSchema } from "#/queries/article.js";
 import { type UseMutationResult, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiUrl } from "@/utils/api.ts";
+import { apiUrl } from "#/utils/api.js";
 import type { z } from "zod/mini";
 import { handleJsonApiError } from "@jsonapi-serde/client";
 
