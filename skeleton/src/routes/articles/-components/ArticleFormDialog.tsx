@@ -28,7 +28,7 @@ type Props = {
     onSubmit: (values: TransformedValues) => Promise<void>;
 };
 
-const ArticleFormDialog = ({ title, defaultValues, onSubmit }: Props): ReactNode => {
+export const ArticleFormDialog = ({ title, defaultValues, onSubmit }: Props): ReactNode => {
     const form = useForm<FieldValues, unknown, TransformedValues>({
         resolver: zodResolver(schema),
         defaultValues,
@@ -73,5 +73,3 @@ const ArticleFormDialog = ({ title, defaultValues, onSubmit }: Props): ReactNode
         </Dialog>
     );
 };
-
-export default ArticleFormDialog;

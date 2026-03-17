@@ -42,7 +42,7 @@ type Props = {
     error: Error;
 };
 
-const ErrorCard = ({ error }: Props): ReactNode => {
+export const ErrorCard = ({ error }: Props): ReactNode => {
     const [expanded, setExpanded] = useState(false);
 
     const errorDetails = JSON.stringify(
@@ -97,5 +97,3 @@ const ErrorCard = ({ error }: Props): ReactNode => {
         </Card>
     );
 };
-
-export default ErrorCard;

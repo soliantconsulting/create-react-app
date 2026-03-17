@@ -1,11 +1,11 @@
-import { Backdrop, CircularProgress } from "@mui/material";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSnackbar } from "notistack";
 import type { ReactNode } from "react";
-import { useUpdateArticleMutation } from "@/mutations/article.ts";
-import { useQueryOptionsFactory } from "@/queries";
-import ArticleFormDialog, { type ArticleFormValues } from "../-components/ArticleFormDialog.tsx";
+import { InlineSpinner } from "#/components/InlineSpinner.js";
+import { useUpdateArticleMutation } from "#/mutations/article.js";
+import { useQueryOptionsFactory } from "#/queries/index.js";
+import { ArticleFormDialog, type ArticleFormValues } from "../-components/ArticleFormDialog.js";
 
 const Root = (): ReactNode => {
     const { enqueueSnackbar } = useSnackbar();
@@ -44,11 +44,7 @@ const Root = (): ReactNode => {
 
 export const Route = createFileRoute("/articles/$articleId/edit")({
     component: Root,
-    pendingComponent: () => (
-        <Backdrop open>
-            <CircularProgress />
-        </Backdrop>
-    ),
+    pendingComponent: InlineSpinner,
     loader: async ({ context, params }) => {
         await context.queryClient.ensureQueryData(context.qof.article.get(params.articleId));
     },

@@ -1,5 +1,5 @@
 import { createContext, type ReactNode, useContext } from "react";
-import { createArticleQueryOptionsFactory } from "@/queries/article.ts";
+import { createArticleQueryOptionsFactory } from "#/queries/article.js";
 
 export const createQueryOptionsFactory = (authFetch: typeof fetch) => ({
     article: createArticleQueryOptionsFactory(authFetch),

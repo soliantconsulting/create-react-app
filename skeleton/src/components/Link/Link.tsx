@@ -6,5 +6,4 @@ const MuiLinkComponent = React.forwardRef<HTMLAnchorElement, MuiLinkProps>((prop
     <MuiLink ref={ref} {...props} />
 ));
 
-const Link = createLink(MuiLinkComponent);
-export default Link;
+export const Link = createLink(MuiLinkComponent);

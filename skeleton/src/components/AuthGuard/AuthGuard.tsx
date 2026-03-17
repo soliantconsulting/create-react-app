@@ -1,14 +1,14 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
-import FullPageSpinner from "@/components/FullPageSpinner/index.ts";
-import AuthError from "./AuthError.tsx";
+import { InlineSpinner } from "#/components/InlineSpinner.js";
+import { AuthError } from "./AuthError.js";
 
 type Props = {
     children: ReactNode;
 };
 
-const AuthGuard = ({ children }: Props): ReactNode => {
+export const AuthGuard = ({ children }: Props): ReactNode => {
     const { isAuthenticated, isLoading, loginWithRedirect, error } = useAuth0();
 
     useEffect(() => {
@@ -27,7 +27,6 @@ const AuthGuard = ({ children }: Props): ReactNode => {
         return children;
     }
 
-    return <FullPageSpinner />;
+    return <InlineSpinner />;
 };
 
-export default AuthGuard;

@@ -7,7 +7,7 @@ import {
 import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod/mini";
 import { zt } from "zod-temporal/mini";
-import { apiUrl } from "@/utils/api.ts";
+import { apiUrl } from "#/utils/api.js";
 
 export const articleAttributesSchema = z.object({
     title: z.string(),

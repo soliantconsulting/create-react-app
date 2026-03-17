@@ -1,6 +1,6 @@
-import ErrorCard from "@/components/ErrorCard";
-import FullPageSpinner from "@/components/FullPageSpinner";
-import type { QueryOptionsFactory } from "@/queries";
+import { ErrorCard } from "#/components/ErrorCard.js";
+import { FullPageSpinner } from "#/components/FullPageSpinner.js";
+import type { QueryOptionsFactory } from "#/queries/index.js";
 import { AppBar, Box, Container, Toolbar, Typography } from "@mui/material";
 import type { QueryClient } from "@tanstack/react-query";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";

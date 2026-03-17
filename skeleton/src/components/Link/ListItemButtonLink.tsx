@@ -10,5 +10,4 @@ const MuiListItemButtonLinkComponent = React.forwardRef<
     MuiListItemButtonProps<"a">
 >((props, ref) => <MuiListItemButton ref={ref} component="a" {...props} />);
 
-const ListItemButtonLink = createLink(MuiListItemButtonLinkComponent);
-export default ListItemButtonLink;
+export const ListItemButtonLink = createLink(MuiListItemButtonLinkComponent);

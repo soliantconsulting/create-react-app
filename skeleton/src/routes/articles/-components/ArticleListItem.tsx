@@ -2,12 +2,11 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { IconButton, ListItem, ListItemText, Menu, MenuItem } from "@mui/material";
 import { useNavigate } from "@tanstack/react-router";
 import { bindMenu, bindTrigger, usePopupState } from "material-ui-popup-state/hooks";
+import { useConfirm } from "material-ui-confirm";
 import { useSnackbar } from "notistack";
 import type { ReactNode } from "react";
-import { useConfirm } from "react-confirm-hook";
-import ConfirmDialog from "@/components/ConfirmDialog/index.ts";
-import { useDeleteArticleMutation } from "@/mutations/article.ts";
-import type { ListArticle } from "@/queries/article.ts";
+import { useDeleteArticleMutation } from "#/mutations/article.js";
+import type { ListArticle } from "#/queries/article.js";
 
 type Props = {
     article: ListArticle;
@@ -20,23 +19,22 @@ const ArticleListItem = ({ article }: Props): ReactNode => {
     });
     const deleteMutation = useDeleteArticleMutation();
     const { enqueueSnackbar } = useSnackbar();
-    const confirm = useConfirm(ConfirmDialog);
+    const confirm = useConfirm();
     const navigate = useNavigate();
 
     const handleDelete = () => {
-        confirm({
+        void confirm({
             title: "Confirm deletion",
-            message: "Do you really want to delete this article?",
-            onConfirm: async () => {
-                try {
-                    await deleteMutation.mutateAsync({ id: article.id });
-                } catch {
-                    enqueueSnackbar("Failed to delete article", { variant: "error" });
-                    return;
-                }
+            description: "Do you really want to delete this article?",
+        }).then(async () => {
+            try {
+                await deleteMutation.mutateAsync({ id: article.id });
+            } catch {
+                enqueueSnackbar("Failed to delete article", { variant: "error" });
+                return;
+            }
 
-                enqueueSnackbar("Article deleted", { variant: "success" });
-            },
+            enqueueSnackbar("Article deleted", { variant: "success" });
         });
     };
 

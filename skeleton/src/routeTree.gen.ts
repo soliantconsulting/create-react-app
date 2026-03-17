@@ -11,10 +11,10 @@
 // Import Routes
 
 import { Route as rootRoute } from "./routes/__root.tsx.liquid";
-import { Route as ArticlesArticleIdEditImport } from "./routes/articles/$articleId/edit";
-import { Route as ArticlesCreateImport } from "./routes/articles/create";
-import { Route as ArticlesRouteImport } from "./routes/articles/route";
-import { Route as IndexImport } from "./routes/index";
+import { Route as ArticlesArticleIdEditImport } from "./routes/articles/$articleId/edit.js";
+import { Route as ArticlesCreateImport } from "./routes/articles/create.js";
+import { Route as ArticlesRouteImport } from "./routes/articles/route.js";
+import { Route as IndexImport } from "./routes/index.js";
 
 // Create/Update Routes
 
