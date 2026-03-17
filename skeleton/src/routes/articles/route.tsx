@@ -4,8 +4,8 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { type ReactNode, useMemo } from "react";
 import { z } from "zod/mini";
-import { ButtonLink } from "#/components/Link/index.js";
 import { InlineSpinner } from "#/components/InlineSpinner.js";
+import { ButtonLink } from "#/components/Link/index.js";
 import { useQueryOptionsFactory } from "#/queries/index.js";
 import ArticleListItem from "./-components/ArticleListItem.js";
 
@@ -75,4 +75,3 @@ export const Route = createFileRoute("/articles")({
         await context.queryClient.ensureQueryData(context.qof.article.list({ pageParams }));
     },
 });
-

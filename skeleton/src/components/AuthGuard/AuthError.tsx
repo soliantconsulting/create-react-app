@@ -35,4 +35,3 @@ export const AuthError = ({ error }: Props): ReactNode => {
         </Container>
     );
 };
-

@@ -29,4 +29,3 @@ export const AuthGuard = ({ children }: Props): ReactNode => {
 
     return <FullPageSpinner />;
 };
-
