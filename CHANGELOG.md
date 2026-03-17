@@ -1,3 +1,10 @@
+# [2.13.0](https://github.com/soliantconsulting/create-react-app/compare/v2.12.6...v2.13.0) (2026-03-17)
+
+
+### Features
+
+* update dependencies and restructure skeleton ([141d47c](https://github.com/soliantconsulting/create-react-app/commit/141d47ccb127f16685d3d9e61ec590888cae65e7))
+
 ## [2.12.6](https://github.com/soliantconsulting/create-react-app/compare/v2.12.5...v2.12.6) (2026-03-04)
 
 
