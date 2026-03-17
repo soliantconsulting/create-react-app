@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
-import { InlineSpinner } from "#/components/InlineSpinner.js";
+import { FullPageSpinner } from "#/components/FullPageSpinner.js";
 import { AuthError } from "./AuthError.js";
 
 type Props = {
@@ -27,6 +27,6 @@ export const AuthGuard = ({ children }: Props): ReactNode => {
         return children;
     }
 
-    return <InlineSpinner />;
+    return <FullPageSpinner />;
 };
 
