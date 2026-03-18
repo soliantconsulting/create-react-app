@@ -1,3 +1,10 @@
+## [2.13.1](https://github.com/soliantconsulting/create-react-app/compare/v2.13.0...v2.13.1) (2026-03-18)
+
+
+### Bug Fixes
+
+* **skeleton:** update vite config for vite v8 ([10b6fb3](https://github.com/soliantconsulting/create-react-app/commit/10b6fb36d028e44abcb2c8f99098c6af8ab931d1))
+
 # [2.13.0](https://github.com/soliantconsulting/create-react-app/compare/v2.12.6...v2.13.0) (2026-03-17)
 
 
