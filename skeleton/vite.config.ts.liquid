@@ -1,8 +1,7 @@
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import favicons from "vite-plugin-hashed-favicons";
-import tsconfigPaths from "vite-tsconfig-paths";
 import TanStackRouterVite from "@tanstack/router-plugin/vite";
 
 export default defineConfig({
@@ -24,40 +23,46 @@ export default defineConfig({
             },
         }),
         react(),
-        tsconfigPaths(),
         visualizer(),
         favicons("./src/assets/favicon.svg"),
     ],
+    resolve: {
+        tsconfigPaths: true,
+    },
     build: {
         sourcemap: true,
-        rollupOptions: {
+        rolldownOptions: {
             output: {
-                manualChunks: {
-                    react: ["react", "react-dom", "@tanstack/react-router", "material-ui-confirm"],
-                    mui: [
-                        "@mui/material",
-                        "@mui/icons-material",
-                        "material-ui-popup-state",
-                        "@emotion/react",
-                        "@emotion/styled",
+                codeSplitting: {
+                    groups: [
+                        {
+                            name: "react",
+                            test: /node_modules[\\/](react|react-dom|@tanstack[\\/]react-router)[\\/]/,
+                        },
+                        {
+                            name: "mui",
+                            test: /node_modules[\\/](@mui|material-ui-confirm|material-ui-popup-state|@emotion|notistack)/,
+                        },
+                        {
+                            name: "query",
+                            test: /node_modules[\\/](@tanstack[\\/]react-query|@jsonapi-serde)/,
+                        },
+                        {
+                            name: "form",
+                            test: /node_modules[\\/](react-hook-form|@hookform|mui-rhf-integration)/,
+                        },
+                        {
+                            name: "zod",
+                            test: /node_modules[\\/]zod/,
+                        },
+                        {%- if features contains "auth0" %}
+                        {
+                            name: "auth",
+                            test: /node_modules[\\/]@auth0/,
+                        },
+                        {%- endif %}
                     ],
-                    notistack: ["notistack"],
-                    query: ["@tanstack/react-query", "@jsonapi-serde/client"],
-                    form: ["react-hook-form", "@hookform/resolvers", "mui-rhf-integration"],
-                    temporal: ["temporal-polyfill"],
-                    zod: ["zod", "zod-temporal"],
-                    {%- if features contains "auth0" %}
-                    auth: ["@auth0/auth0-react"],
-                    {%- endif %}
                 },
-            },
-            // @see https://github.com/vitejs/vite/issues/15012
-            onwarn(warning, defaultHandler) {
-                if (warning.code === 'SOURCEMAP_ERROR') {
-                    return;
-                }
-
-                defaultHandler(warning)
             },
         },
     },
@@ -65,3 +70,4 @@ export default defineConfig({
         port: 3010,
     },
 });
+
