@@ -1,3 +1,10 @@
+## [2.13.2](https://github.com/soliantconsulting/create-react-app/compare/v2.13.1...v2.13.2) (2026-04-28)
+
+
+### Bug Fixes
+
+* update packages ([f70b090](https://github.com/soliantconsulting/create-react-app/commit/f70b09051d2900529642db6b01980c9517e79682))
+
 ## [2.13.1](https://github.com/soliantconsulting/create-react-app/compare/v2.13.0...v2.13.1) (2026-03-18)
 
 
