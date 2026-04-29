@@ -1,3 +1,10 @@
+## [2.13.4](https://github.com/soliantconsulting/create-react-app/compare/v2.13.3...v2.13.4) (2026-04-29)
+
+
+### Bug Fixes
+
+* revert vite react plugin change and switch package.json to non swc package ([af26c73](https://github.com/soliantconsulting/create-react-app/commit/af26c73aede02fbb6f8d1bf3da26a25ecb7ff85f))
+
 ## [2.13.3](https://github.com/soliantconsulting/create-react-app/compare/v2.13.2...v2.13.3) (2026-04-29)
 
 
