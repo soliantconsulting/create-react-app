@@ -1,3 +1,10 @@
+## [2.13.3](https://github.com/soliantconsulting/create-react-app/compare/v2.13.2...v2.13.3) (2026-04-29)
+
+
+### Bug Fixes
+
+* switch vite react plugin import update to swc to match package.json ([c9e49f9](https://github.com/soliantconsulting/create-react-app/commit/c9e49f91d4e1822f99257124ac323394794aecb2))
+
 ## [2.13.2](https://github.com/soliantconsulting/create-react-app/compare/v2.13.1...v2.13.2) (2026-04-28)
 
 
