@@ -7,6 +7,7 @@ import {
     type ProjectContext,
 } from "@soliantconsulting/starter-lib";
 import type { FeaturesContext } from "./features.js";
+import type { StagingDomainContext } from "./staging-domain.js";
 
 export const synthTask = createSynthTask(
     fileURLToPath(new URL("../../skeleton", import.meta.url)),
@@ -18,12 +19,19 @@ export const synthTask = createSynthTask(
                 });
             }
         },
-        ignoreList: (context: ProjectContext & Partial<AwsEnvContext & FeaturesContext>) => {
+        ignoreList: (
+            context: ProjectContext &
+                Partial<AwsEnvContext & FeaturesContext & StagingDomainContext>,
+        ) => {
             const list: string[] = [];
 
             if (!context.awsEnv) {
                 list.push("cdk");
                 list.push("bitbucket-pipelines.yml.liquid");
+            }
+
+            if (!context.stagingDomain) {
+                list.push(".sld-dns-control.json.liquid");
             }
 
             if (!context.features?.includes("auth0")) {

@@ -7,5 +7,19 @@
 
 ## Favicons
 
-This project automatically generates favicons and injects them into the index.html file during build. To change the
-existing favicon, simply replace `src/assets/favicon.svg` with another SVG file.
+Favicons are generated from `src/assets/favicon.svg` and injected into `index.html` at build
+time. To change the favicon, replace that SVG.
+{%- if stagingDomain %}
+
+## Staging DNS
+
+After the first staging deploy, point the staging domain at the new CloudFront distribution:
+
+```sh
+pnpx @soliantconsulting/sld-dns-control-client point-staging-domain
+```
+
+This reads `.sld-dns-control.json`, finds the deployed stack's `DistributionDomainName` output,
+and upserts the CNAME via the DNS control API. Only needed once after the initial deploy;
+subsequent deploys keep the same CloudFront domain.
+{%- endif %}
