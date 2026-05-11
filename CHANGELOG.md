@@ -1,3 +1,10 @@
+## [2.14.1](https://github.com/soliantconsulting/create-react-app/compare/v2.14.0...v2.14.1) (2026-05-11)
+
+
+### Bug Fixes
+
+* **staging-domain:** pin cert region to us-east-1 ([1df5558](https://github.com/soliantconsulting/create-react-app/commit/1df5558ed43916fd88177e407c59372b5ffbe4ab))
+
 # [2.14.0](https://github.com/soliantconsulting/create-react-app/compare/v2.13.4...v2.14.0) (2026-05-11)
 
 
