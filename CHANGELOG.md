@@ -1,3 +1,10 @@
+## [2.14.3](https://github.com/soliantconsulting/create-react-app/compare/v2.14.2...v2.14.3) (2026-05-11)
+
+
+### Bug Fixes
+
+* **ci:** bump workflow actions to v6 ([9f0a782](https://github.com/soliantconsulting/create-react-app/commit/9f0a78256398b51e3da7cd2a894b2193787de75f))
+
 ## [2.14.2](https://github.com/soliantconsulting/create-react-app/compare/v2.14.1...v2.14.2) (2026-05-11)
 
 
