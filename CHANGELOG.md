@@ -1,3 +1,10 @@
+## [2.14.2](https://github.com/soliantconsulting/create-react-app/compare/v2.14.1...v2.14.2) (2026-05-11)
+
+
+### Bug Fixes
+
+* **skeleton:** move side-effects-cache flag into pnpm-workspace.yaml ([3ffcd8e](https://github.com/soliantconsulting/create-react-app/commit/3ffcd8e50f7f2c52a48fce4d284f2c5794c0bd47))
+
 ## [2.14.1](https://github.com/soliantconsulting/create-react-app/compare/v2.14.0...v2.14.1) (2026-05-11)
 
 
