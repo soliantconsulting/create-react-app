@@ -1,3 +1,10 @@
+# [2.14.0](https://github.com/soliantconsulting/create-react-app/compare/v2.13.4...v2.14.0) (2026-05-11)
+
+
+### Features
+
+* integrate sld-dns-control client for staging certificates ([3efaaca](https://github.com/soliantconsulting/create-react-app/commit/3efaacaf46ef0faad2c713d4bb9e1c37188ac881))
+
 ## [2.13.4](https://github.com/soliantconsulting/create-react-app/compare/v2.13.3...v2.13.4) (2026-04-29)
 
 
