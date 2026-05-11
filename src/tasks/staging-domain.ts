@@ -55,10 +55,12 @@ const issueNewCertificate = async (
     const subdomain = input.replace(/\.soliant-dev\.io$/, "");
     const domainName = `${subdomain}.soliant-dev.io`;
 
-    task.output = "Issuing certificate (a browser window will open for sign-in if needed)…";
+    task.output =
+        "Issuing certificate in us-east-1 (a browser window will open for sign-in if needed)…";
 
     const certificateArn = await issueCertificate({
         domainName,
+        region: "us-east-1",
         onProgress: (event) => {
             if (event.kind === "requested") {
                 task.output = `Requested ${event.certificateArn}`;
