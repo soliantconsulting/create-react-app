@@ -1,3 +1,6 @@
+{%- if sentry %}
+import { sentryVitePlugin } from "@sentry/vite-plugin";
+{%- endif %}
 import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
@@ -25,6 +28,27 @@ export default defineConfig({
         react(),
         visualizer(),
         favicons("./src/assets/favicon.svg"),
+        {%- if sentry %}
+        sentryVitePlugin({
+            org: "{{sentry.org}}",
+            project: "{{sentry.projectSlug}}",
+            disable: !process.env.SENTRY_AUTH_TOKEN,
+            telemetry: false,
+            // Fail the build instead of silently deploying without source
+            // maps (the upload failure would otherwise still delete them).
+            errorHandler: (error) => {
+                throw error;
+            },
+            release: {
+                name: process.env.BITBUCKET_COMMIT,
+            },
+            sourcemaps: {
+                // Source maps live in Sentry only; keep them out of the
+                // public bucket.
+                filesToDeleteAfterUpload: "./dist/**/*.map",
+            },
+        }),
+        {%- endif %}
     ],
     resolve: {
         tsconfigPaths: true,

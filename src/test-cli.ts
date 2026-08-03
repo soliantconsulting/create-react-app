@@ -6,6 +6,7 @@ import {
     type DeployRoleContext,
     type ProjectContext,
     runPipeline,
+    type SentryContext,
 } from "@soliantconsulting/starter-lib";
 import type { FeaturesContext } from "./tasks/features.js";
 import type { StagingDomainContext } from "./tasks/staging-domain.js";
@@ -15,7 +16,8 @@ type BaseContext = ProjectContext &
     AwsEnvContext &
     DeployRoleContext &
     FeaturesContext &
-    StagingDomainContext;
+    StagingDomainContext &
+    SentryContext;
 
 await runPipeline({
     packageName: "@soliantconsulting/create-react-app",
@@ -36,6 +38,13 @@ await runPipeline({
         stagingDomain: {
             domainName: "example.com",
             certificateArn: "arn://example",
+        },
+        sentry: {
+            org: "soliant-consulting-inc",
+            projectSlug: "test-synth",
+            dsn: "https://examplePublicKey@o0.ingest.sentry.io/0",
+            authToken: "sntrys_example",
+            authTokenId: "0",
         },
         features: ["auth0"],
     } satisfies BaseContext,

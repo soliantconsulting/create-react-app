@@ -7,9 +7,11 @@ import {
     createGitTask,
     createPnpmVersionTask,
     createProjectTask,
+    createSentryTask,
     runPipeline,
 } from "@soliantconsulting/starter-lib";
 import { featuresTask } from "./tasks/features.js";
+import { sentryVariableTask } from "./tasks/sentry-variable.js";
 import { stagingDomainTask } from "./tasks/staging-domain.js";
 import { synthTask } from "./tasks/synth.js";
 
@@ -22,6 +24,8 @@ await runPipeline({
         createBitbucketRepositoryTask(),
         createDeployRoleTask(),
         stagingDomainTask,
+        createSentryTask({ projectPlatform: "javascript-react" }),
+        sentryVariableTask,
         featuresTask,
         synthTask,
         createGitTask(),

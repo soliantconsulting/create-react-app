@@ -17,6 +17,9 @@ import {
 import { routeTree } from "#/routeTree.gen.js";
 import { extendedReplaceEqualDeep } from "#/utils/api.js";
 import { CssBaseline, createTheme } from "@mui/material";
+{%- if sentry %}
+import * as Sentry from "@sentry/react";
+{%- endif %}
 import { ThemeProvider } from "@mui/material/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
@@ -24,6 +27,16 @@ import { SnackbarProvider } from "notistack";
 import { type ReactNode, StrictMode } from "react";
 import { ConfirmProvider } from "material-ui-confirm";
 import { createRoot } from "react-dom/client";
+
+{%- if sentry %}
+
+if (import.meta.env.VITE_APP_SENTRY_DSN) {
+    Sentry.init({
+        dsn: import.meta.env.VITE_APP_SENTRY_DSN,
+        environment: import.meta.env.VITE_APP_SENTRY_ENVIRONMENT,
+    });
+}
+{%- endif %}
 
 const container = document.getElementById("root");
 

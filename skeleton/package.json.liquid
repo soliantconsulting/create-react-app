@@ -7,6 +7,9 @@
         "@biomejs/biome": "2.4.7",
         "@commitlint/cli": "^20.5.0",
         "@commitlint/config-conventional": "^20.5.0",
+        {%- if sentry %}
+        "@sentry/vite-plugin": "^5.4.0",
+        {%- endif %}
         "@tanstack/router-plugin": "^1.166.13",
         "@tsconfig/vite-react": "^7.0.0",
         "@types/react": "^19.2.14",
@@ -29,6 +32,9 @@
         "@jsonapi-serde/client": "^1.2.2",
         "@mui/icons-material": "^7.3.9",
         "@mui/material": "^7.3.9",
+        {%- if sentry %}
+        "@sentry/react": "^10.69.0",
+        {%- endif %}
         "@tanstack/react-query": "^5.90.21",
         "@tanstack/react-router": "^1.167.4",
         "material-ui-confirm": "^4.0.0",
