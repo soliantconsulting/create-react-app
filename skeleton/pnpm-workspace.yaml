@@ -1,6 +1,7 @@
 sideEffectsCache: false
 allowBuilds:
   '@biomejs/biome': true
+  browser-tabs-lock: false
   '@swc/core': true
   esbuild: true
   lefthook: true
