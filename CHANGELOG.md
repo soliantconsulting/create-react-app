@@ -1,3 +1,10 @@
+## [2.15.1](https://github.com/soliantconsulting/create-react-app/compare/v2.15.0...v2.15.1) (2026-08-03)
+
+
+### Bug Fixes
+
+* declare node types explicitly ([9829abb](https://github.com/soliantconsulting/create-react-app/commit/9829abb76a39b70b6998b8ef9ad0f3620d41a28a))
+
 # [2.15.0](https://github.com/soliantconsulting/create-react-app/compare/v2.14.3...v2.15.0) (2026-08-03)
 
 
