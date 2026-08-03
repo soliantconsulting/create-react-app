@@ -1,3 +1,21 @@
+# [2.15.0](https://github.com/soliantconsulting/create-react-app/compare/v2.14.3...v2.15.0) (2026-08-03)
+
+
+### Bug Fixes
+
+* **ci:** exclude the skeleton favicon source from repo linting ([d6e5758](https://github.com/soliantconsulting/create-react-app/commit/d6e5758380baef19fd13a136c0303bb5dd95c732))
+* migrate to Material UI 9 ([04322d7](https://github.com/soliantconsulting/create-react-app/commit/04322d79638b213722f490ecea2104a7555ecd1d))
+* migrate to TypeScript 7 ([684c097](https://github.com/soliantconsulting/create-react-app/commit/684c09770f431037126e329a9261cba7993f42a6))
+* set explicit rootDir for TypeScript 7 emit ([aaaa3fb](https://github.com/soliantconsulting/create-react-app/commit/aaaa3fb6c6ccd7dc2afb47e5b703082ce75dd119))
+* **skeleton:** declare the browser-tabs-lock build script as denied ([e73d6da](https://github.com/soliantconsulting/create-react-app/commit/e73d6da7abcd397a4f17608bd1e864c8f42b7ee9))
+* update dependencies to current versions ([d88db1a](https://github.com/soliantconsulting/create-react-app/commit/d88db1aac7aa22a33d32cdd7389aed820002d3b6))
+* update to starter-lib 3 with listr2 11 ([6c6ad80](https://github.com/soliantconsulting/create-react-app/commit/6c6ad80e5bd3ff0a47c1ba611e50634b2913daa2))
+
+
+### Features
+
+* **skeleton:** report errors to Sentry ([094160d](https://github.com/soliantconsulting/create-react-app/commit/094160db15df56f031c337739582a1099f7ac9c2))
+
 ## [2.14.3](https://github.com/soliantconsulting/create-react-app/compare/v2.14.2...v2.14.3) (2026-05-11)
 
 
