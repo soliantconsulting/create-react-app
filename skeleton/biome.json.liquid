@@ -7,13 +7,14 @@
             "commitlint.config.cjs",
             "src/**/*",
             "!cdk/cdk.out",
+            "!src/assets",
             "!src/routeTree.gen.ts"
         ]
     },
     "linter": {
         "enabled": true,
         "rules": {
-            "recommended": true,
+            "preset": "recommended",
             "complexity": {
                 "noExcessiveCognitiveComplexity": "warn",
                 "useSimplifiedLogicExpression": "error"
