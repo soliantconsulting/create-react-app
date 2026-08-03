@@ -7,6 +7,7 @@
             "commitlint.config.cjs",
             "src/**/*",
             "skeleton/**/*",
+            "!skeleton/src/assets",
             "!skeleton/src/routeTree.gen.ts"
         ]
     },
