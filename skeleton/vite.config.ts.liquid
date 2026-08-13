@@ -54,7 +54,14 @@ export default defineConfig({
         tsconfigPaths: true,
     },
     build: {
+        {%- if sentry %}
+        // Emit maps only when they can be uploaded to Sentry; without the
+        // token the plugin self-disables, which would also skip the
+        // delete-after-upload step and ship the maps to the public bucket.
+        sourcemap: process.env.SENTRY_AUTH_TOKEN ? "hidden" : false,
+        {%- else %}
         sourcemap: true,
+        {%- endif %}
         rolldownOptions: {
             output: {
                 codeSplitting: {

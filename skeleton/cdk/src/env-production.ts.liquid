@@ -23,6 +23,7 @@ new AppStack(app, "{{project.name}}-production", {
         {%- if sentry %}
         VITE_APP_SENTRY_DSN: "{{sentry.dsn}}",
         VITE_APP_SENTRY_ENVIRONMENT: "production",
+        VITE_APP_SENTRY_TRACES_SAMPLE_RATE: "0",
         {%- endif %}
     },
 });

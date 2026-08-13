@@ -5,6 +5,7 @@ import {
     createSynthTask,
     execute,
     type ProjectContext,
+    type SentryContext,
 } from "@soliantconsulting/starter-lib";
 import type { FeaturesContext } from "./features.js";
 import type { StagingDomainContext } from "./staging-domain.js";
@@ -21,9 +22,13 @@ export const synthTask = createSynthTask(
         },
         ignoreList: (
             context: ProjectContext &
-                Partial<AwsEnvContext & FeaturesContext & StagingDomainContext>,
+                Partial<AwsEnvContext & FeaturesContext & StagingDomainContext & SentryContext>,
         ) => {
             const list: string[] = [];
+
+            if (!context.sentry) {
+                list.push("src/instrument.ts");
+            }
 
             if (!context.awsEnv) {
                 list.push("cdk");
