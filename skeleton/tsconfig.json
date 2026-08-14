@@ -2,6 +2,7 @@
     "extends": ["@tsconfig/vite-react/tsconfig.json"],
     "compilerOptions": {
         "noImplicitAny": true,
+        "lib": ["ES2023", "DOM", "ESNext.Temporal", "ESNext.Intl", "ESNext.Date"],
         "paths": {
             "#/*": ["./src/*"]
         }
