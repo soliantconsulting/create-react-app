@@ -1,3 +1,11 @@
+# [2.16.0](https://github.com/soliantconsulting/create-react-app/compare/v2.15.1...v2.16.0) (2026-08-19)
+
+
+### Features
+
+* initialize Sentry in a preload module and widen capture ([#3](https://github.com/soliantconsulting/create-react-app/issues/3)) ([050262c](https://github.com/soliantconsulting/create-react-app/commit/050262c1b6691c5c4d1835ce20a3d0a6e0a4c6e3))
+* **skeleton:** source Temporal types from TypeScript lib entries ([#4](https://github.com/soliantconsulting/create-react-app/issues/4)) ([5dfaa98](https://github.com/soliantconsulting/create-react-app/commit/5dfaa981c796fd9f33b7238a7ca772c122e04025))
+
 ## [2.15.1](https://github.com/soliantconsulting/create-react-app/compare/v2.15.0...v2.15.1) (2026-08-03)
 
 
