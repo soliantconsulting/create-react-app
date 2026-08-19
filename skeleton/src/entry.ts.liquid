@@ -1,6 +1,9 @@
 {%- if sentry %}
-import "./instrument.js";
-{%- endif %}
+if (import.meta.env.VITE_APP_SENTRY_DSN) {
+    await import("./instrument.js");
+}
+
+{% endif -%}
 if (typeof Temporal === "undefined") {
     await import("temporal-polyfill/global");
 }

@@ -9,9 +9,9 @@ interface ImportMetaEnv {
     readonly VITE_APP_AUTH0_AUDIENCE: string;
     {%- endif %}
     {%- if sentry %}
-    readonly VITE_APP_SENTRY_DSN: string;
-    readonly VITE_APP_SENTRY_ENVIRONMENT: string;
-    readonly VITE_APP_SENTRY_TRACES_SAMPLE_RATE: string;
+    readonly VITE_APP_SENTRY_DSN?: string;
+    readonly VITE_APP_SENTRY_ENVIRONMENT?: string;
+    readonly VITE_APP_SENTRY_TRACES_SAMPLE_RATE?: string;
     {%- endif %}
 }
 
