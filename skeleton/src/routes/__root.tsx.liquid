@@ -2,16 +2,9 @@ import { ErrorCard } from "#/components/ErrorCard.js";
 import { FullPageSpinner } from "#/components/FullPageSpinner.js";
 import type { QueryOptionsFactory } from "#/queries/index.js";
 import { AppBar, Box, Container, Toolbar, Typography } from "@mui/material";
-{%- if sentry %}
-import * as Sentry from "@sentry/react";
-{%- endif %}
 import type { QueryClient } from "@tanstack/react-query";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
-{%- if sentry %}
-import { type ReactNode, useEffect } from "react";
-{%- else %}
 import type { ReactNode } from "react";
-{%- endif %}
 
 export type RootRouterContext = {
     queryClient: QueryClient;
@@ -39,18 +32,11 @@ type RootErrorProps = {
     error: Error;
 };
 
-const RootError = ({ error }: RootErrorProps): ReactNode => {
-    {%- if sentry %}
-    useEffect(() => {
-        Sentry.captureException(error);
-    }, [error]);
-{% endif %}
-    return (
-        <Container maxWidth="md" sx={{ '{{' }} my: 2 }}>
-            <ErrorCard error={error} />
-        </Container>
-    );
-};
+const RootError = ({ error }: RootErrorProps): ReactNode => (
+    <Container maxWidth="md" sx={{ '{{' }} my: 2 }}>
+        <ErrorCard error={error} />
+    </Container>
+);
 
 export const Route = createRootRouteWithContext<RootRouterContext>()({
     component: Root,

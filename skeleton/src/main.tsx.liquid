@@ -28,16 +28,6 @@ import { type ReactNode, StrictMode } from "react";
 import { ConfirmProvider } from "material-ui-confirm";
 import { createRoot } from "react-dom/client";
 
-{%- if sentry %}
-
-if (import.meta.env.VITE_APP_SENTRY_DSN) {
-    Sentry.init({
-        dsn: import.meta.env.VITE_APP_SENTRY_DSN,
-        environment: import.meta.env.VITE_APP_SENTRY_ENVIRONMENT,
-    });
-}
-{%- endif %}
-
 const container = document.getElementById("root");
 
 if (!container) {
@@ -53,7 +43,15 @@ const queryClient = new QueryClient({
     },
 });
 
+{%- if sentry %}
+const root = createRoot(container, {
+    onUncaughtError: Sentry.reactErrorHandler(),
+    onCaughtError: Sentry.reactErrorHandler(),
+    onRecoverableError: Sentry.reactErrorHandler(),
+});
+{%- else %}
 const root = createRoot(container);
+{%- endif %}
 
 const router = createRouter({
     routeTree,
