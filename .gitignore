@@ -3,3 +3,4 @@
 /dist
 /test-synth
 /test-synth-cognito
+/test-synth-noauth

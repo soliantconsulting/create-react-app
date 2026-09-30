@@ -25,6 +25,10 @@
         {%- if features contains "auth0" %}
         "@auth0/auth0-react": "^2.15.1",
         {%- endif %}
+        {%- if auth == "cognito" %}
+        "oidc-client-ts": "^3.5.0",
+        "react-oidc-context": "^3.3.1",
+        {%- endif %}
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
         "@fontsource/roboto": "^5.2.10",

@@ -92,6 +92,12 @@ export default defineConfig({
                             test: /node_modules[\\/]@auth0/,
                         },
                         {%- endif %}
+                        {%- if auth == "cognito" %}
+                        {
+                            name: "auth",
+                            test: /node_modules[\\/](react-oidc-context|oidc-client-ts)/,
+                        },
+                        {%- endif %}
                     ],
                 },
             },

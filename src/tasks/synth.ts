@@ -44,6 +44,10 @@ export const synthTask = createSynthTask(
                 list.push("src/hooks/useAuthenticatedFetch.ts.liquid");
             }
 
+            if (context.auth !== "cognito") {
+                list.push("src/hooks/useLogout.ts");
+            }
+
             return list;
         },
     },

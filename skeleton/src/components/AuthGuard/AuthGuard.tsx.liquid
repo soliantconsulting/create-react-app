@@ -1,3 +1,39 @@
+{%- if auth == "cognito" -%}
+import type { ReactNode } from "react";
+import { useEffect } from "react";
+import { hasAuthParams, useAuth } from "react-oidc-context";
+import { FullPageSpinner } from "#/components/FullPageSpinner.js";
+import { AuthError } from "./AuthError.js";
+
+type Props = {
+    children: ReactNode;
+};
+
+export const AuthGuard = ({ children }: Props): ReactNode => {
+    const { isAuthenticated, isLoading, activeNavigator, error, signinRedirect } = useAuth();
+
+    useEffect(() => {
+        if (hasAuthParams() || isLoading || isAuthenticated || activeNavigator || error) {
+            return;
+        }
+
+        const { location } = window;
+        void signinRedirect({
+            state: { returnTo: `${location.pathname}${location.search}${location.hash}` },
+        });
+    }, [isLoading, isAuthenticated, activeNavigator, error, signinRedirect]);
+
+    if (error) {
+        return <AuthError error={error} />;
+    }
+
+    if (isAuthenticated) {
+        return children;
+    }
+
+    return <FullPageSpinner />;
+};
+{%- else -%}
 import { useAuth0 } from "@auth0/auth0-react";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
@@ -29,3 +65,4 @@ export const AuthGuard = ({ children }: Props): ReactNode => {
 
     return <FullPageSpinner />;
 };
+{%- endif %}

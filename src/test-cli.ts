@@ -12,8 +12,10 @@ import type { FeaturesContext } from "./tasks/features.js";
 import type { StagingDomainContext } from "./tasks/staging-domain.js";
 import { synthTask } from "./tasks/synth.js";
 
-const cognito = process.argv[2] === "cognito";
-const directory = cognito ? "test-synth-cognito" : "test-synth";
+const variant = process.argv[2];
+const cognito = variant === "cognito";
+const noauth = variant === "noauth";
+const directory = cognito ? "test-synth-cognito" : noauth ? "test-synth-noauth" : "test-synth";
 
 type BaseContext = ProjectContext &
     AwsEnvContext &
@@ -49,7 +51,7 @@ await runPipeline({
             authToken: "sntrys_example",
             authTokenId: "0",
         },
-        features: [cognito ? "cognito" : "auth0"],
-        auth: cognito ? "cognito" : "auth0",
+        features: noauth ? [] : [cognito ? "cognito" : "auth0"],
+        auth: noauth ? null : cognito ? "cognito" : "auth0",
     } satisfies BaseContext,
 });
