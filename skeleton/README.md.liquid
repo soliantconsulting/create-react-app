@@ -9,6 +9,25 @@
 
 Favicons are generated from `src/assets/favicon.svg` and injected into `index.html` at build
 time. To change the favicon, replace that SVG.
+{%- if auth == "cognito" %}
+
+## Cognito
+
+Login uses the user pool created with `create-cognito`. Fill in `.env` locally, and `buildEnv` in
+`cdk/src/env-*.ts` for deployed stages, from that stack's outputs:
+
+| Variable | Stack output |
+| --- | --- |
+| `VITE_APP_COGNITO_AUTHORITY` | `Issuer` |
+| `VITE_APP_COGNITO_CLIENT_ID` | `SpaClientId` |
+| `VITE_APP_COGNITO_DOMAIN` | `HostedDomain` |
+| `VITE_APP_COGNITO_SCOPE` | `openid email profile` plus `ApiScope` if the API checks it |
+
+The app's origin (for example `http://localhost:3010`, no trailing slash) must be in the SPA
+client's callback and logout URLs in the Cognito project.
+
+Use `useLogout()` from `src/hooks/useLogout.ts` for a logout button.
+{%- endif %}
 {%- if stagingDomain %}
 
 ## Staging DNS
