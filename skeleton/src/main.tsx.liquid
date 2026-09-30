@@ -143,6 +143,7 @@ root.render(
                         redirect_uri={window.location.origin}
                         scope={import.meta.env.VITE_APP_COGNITO_SCOPE}
                         userStore={userStore}
+                        metadataSeed={{ '{{' }} end_session_endpoint: `${import.meta.env.VITE_APP_COGNITO_DOMAIN}/logout` }}
                         automaticSilentRenew
                         onSigninCallback={(user) => {
                             const state = user?.state as { returnTo?: string } | undefined;

@@ -1,6 +1,6 @@
 {%- if auth == "cognito" -%}
 import type { ReactNode } from "react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { hasAuthParams, useAuth } from "react-oidc-context";
 import { FullPageSpinner } from "#/components/FullPageSpinner.js";
 import { AuthError } from "./AuthError.js";
@@ -10,21 +10,60 @@ type Props = {
 };
 
 export const AuthGuard = ({ children }: Props): ReactNode => {
-    const { isAuthenticated, isLoading, activeNavigator, error, signinRedirect } = useAuth();
+    const { user, isAuthenticated, isLoading, activeNavigator, error, signinRedirect, signinSilent } =
+        useAuth();
+    // "idle" until a refresh-token attempt starts; that attempt then owns the redirect.
+    const silentPhase = useRef<"idle" | "attempted">("idle");
+    // Only a failed sign-in callback is fatal. Renew errors fall through to a new sign-in.
+    const fatalError = error?.source === "signinCallback" ? error : undefined;
 
     useEffect(() => {
-        if (hasAuthParams() || isLoading || isAuthenticated || activeNavigator || error) {
+        if (isAuthenticated) {
+            silentPhase.current = "idle";
+            return;
+        }
+
+        if (
+            hasAuthParams() ||
+            isLoading ||
+            activeNavigator ||
+            fatalError ||
+            silentPhase.current === "attempted"
+        ) {
             return;
         }
 
         const { location } = window;
-        void signinRedirect({
-            state: { returnTo: `${location.pathname}${location.search}${location.hash}` },
-        });
-    }, [isLoading, isAuthenticated, activeNavigator, error, signinRedirect]);
+        const redirect = (): void => {
+            void signinRedirect({
+                state: { returnTo: `${location.pathname}${location.search}${location.hash}` },
+            });
+        };
 
-    if (error) {
-        return <AuthError error={error} />;
+        if (user?.refresh_token) {
+            // An expired access token is not renewed automatically on load, so try the refresh token first.
+            silentPhase.current = "attempted";
+            void signinSilent().then((renewed) => {
+                if (!renewed) {
+                    redirect();
+                }
+            });
+            return;
+        }
+
+        redirect();
+    }, [
+        user,
+        isLoading,
+        isAuthenticated,
+        activeNavigator,
+        fatalError,
+        signinRedirect,
+        signinSilent,
+    ]);
+
+    if (fatalError) {
+        return <AuthError error={fatalError} />;
     }
 
     if (isAuthenticated) {

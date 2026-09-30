@@ -17,11 +17,7 @@ export const useAuthenticatedFetch = (): typeof fetch => {
             let accessToken = current && !current.expired ? current.access_token : null;
 
             if (!accessToken) {
-                try {
-                    accessToken = (await signinSilent())?.access_token ?? null;
-                } catch {
-                    accessToken = null;
-                }
+                accessToken = (await signinSilent())?.access_token ?? null;
             }
 
             if (!accessToken) {
