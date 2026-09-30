@@ -39,9 +39,9 @@ export const synthTask = createSynthTask(
                 list.push(".sld-dns-control.json.liquid");
             }
 
-            if (!context.features?.includes("auth0")) {
+            if (!context.auth) {
                 list.push("src/components/AuthGuard");
-                list.push("src/hooks/useAuthenticatedFetch.ts");
+                list.push("src/hooks/useAuthenticatedFetch.ts.liquid");
             }
 
             return list;

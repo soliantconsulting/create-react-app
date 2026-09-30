@@ -1,5 +1,7 @@
-{%- if features contains "auth0" -%}
+{%- if auth == "auth0" -%}
 import { Auth0Provider } from "@auth0/auth0-react";
+{%- endif %}
+{%- if auth -%}
 import { AuthGuard } from "#/components/AuthGuard/index.js";
 import { useAuthenticatedFetch } from "#/hooks/useAuthenticatedFetch.js";
 {%- endif %}
@@ -72,7 +74,7 @@ declare module "@tanstack/react-router" {
 }
 
 const App = (): ReactNode => {
-    {%- if features contains "auth0" %}
+    {%- if auth %}
     const authFetch = useAuthenticatedFetch();
     {%- else %}
     const authFetch = fetch;
@@ -106,7 +108,7 @@ root.render(
                 (children) => (
                     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
                 ),
-                {%- if features contains "auth0" %}
+                {%- if auth == "auth0" %}
                 (children) => (
                     <Auth0Provider
                         domain={import.meta.env.VITE_APP_AUTH0_DOMAIN}
@@ -124,6 +126,8 @@ root.render(
                         {children}
                     </Auth0Provider>
                 ),
+                {%- endif %}
+                {%- if auth %}
                 (children) => <AuthGuard>{children}</AuthGuard>,
                 {%- endif %}
                 (children) => <SnackbarProvider>{children}</SnackbarProvider>,

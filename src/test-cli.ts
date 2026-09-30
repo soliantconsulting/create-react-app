@@ -12,6 +12,9 @@ import type { FeaturesContext } from "./tasks/features.js";
 import type { StagingDomainContext } from "./tasks/staging-domain.js";
 import { synthTask } from "./tasks/synth.js";
 
+const cognito = process.argv[2] === "cognito";
+const directory = cognito ? "test-synth-cognito" : "test-synth";
+
 type BaseContext = ProjectContext &
     AwsEnvContext &
     DeployRoleContext &
@@ -24,9 +27,9 @@ await runPipeline({
     tasks: [synthTask],
     baseContext: {
         project: {
-            name: "test-synth",
+            name: directory,
             title: "Test Synth",
-            path: fileURLToPath(new URL("../test-synth", import.meta.url)),
+            path: fileURLToPath(new URL(`../${directory}`, import.meta.url)),
         },
         awsEnv: {
             accountId: "123456789",
@@ -46,6 +49,7 @@ await runPipeline({
             authToken: "sntrys_example",
             authTokenId: "0",
         },
-        features: ["auth0"],
+        features: [cognito ? "cognito" : "auth0"],
+        auth: cognito ? "cognito" : "auth0",
     } satisfies BaseContext,
 });
