@@ -9,13 +9,19 @@ type Props = {
     children: ReactNode;
 };
 
+const FATAL_ERROR_SOURCES: ReadonlySet<string> = new Set([
+    "signinCallback",
+    "signinRedirect",
+    "signoutRedirect",
+]);
+
 export const AuthGuard = ({ children }: Props): ReactNode => {
     const { user, isAuthenticated, isLoading, activeNavigator, error, signinRedirect, signinSilent } =
         useAuth();
     // "idle" until a refresh-token attempt starts; that attempt then owns the redirect.
     const silentPhase = useRef<"idle" | "attempted">("idle");
-    // Only a failed sign-in callback is fatal. Renew errors fall through to a new sign-in.
-    const fatalError = error?.source === "signinCallback" ? error : undefined;
+    // Renew errors (renewSilent, signinSilent) fall through to a new sign-in. The others would loop.
+    const fatalError = error && FATAL_ERROR_SOURCES.has(error.source) ? error : undefined;
 
     useEffect(() => {
         if (isAuthenticated) {
