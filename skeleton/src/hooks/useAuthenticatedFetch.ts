@@ -6,11 +6,15 @@ export const useAuthenticatedFetch = (): typeof fetch => {
 
     return useCallback(
         async (input: RequestInfo | URL, init?: RequestInit) => {
-            let accessToken: string;
+            let accessToken: string | undefined;
 
             try {
                 accessToken = await getAccessTokenSilently();
             } catch {
+                // Falls through to the login redirect below.
+            }
+
+            if (!accessToken) {
                 const { location } = window;
                 await loginWithRedirect({
                     appState: {
