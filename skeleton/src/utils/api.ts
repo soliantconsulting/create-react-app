@@ -1,5 +1,11 @@
 import { JsonApiError } from "@jsonapi-serde/client";
-import { isPlainArray, isPlainObject } from "@tanstack/react-router";
+
+const isPlainArray = (value: unknown): value is unknown[] =>
+    Array.isArray(value) && value.length === Object.keys(value).length;
+
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+    Object.prototype.toString.call(value) === "[object Object]" &&
+    (Object.getPrototypeOf(value) === null || Object.getPrototypeOf(value) === Object.prototype);
 
 export const apiUrl = (path: string): URL => new URL(path, import.meta.env.VITE_APP_API_ENDPOINT);
 
@@ -146,10 +152,7 @@ export const extendedReplaceEqualDeep = (oldData: unknown, newData: unknown): un
     }
 
     if (isPlainObject(oldData) && isPlainObject(newData)) {
-        return replaceObjectProperties(
-            oldData as Record<string, unknown>,
-            newData as Record<string, unknown>,
-        );
+        return replaceObjectProperties(oldData, newData);
     }
 
     return newData;
