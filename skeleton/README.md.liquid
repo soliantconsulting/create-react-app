@@ -11,7 +11,7 @@ Favicons are generated from `src/assets/favicon.svg` and injected into `index.ht
 time. To change the favicon, replace that SVG.
 {%- if auth == "cognito" %}
 
-## Cognito
+## Using Cognito instead of Auth0
 
 Login uses the user pool created with `create-cognito`. Fill in `.env` locally, and `buildEnv` in
 `cdk/src/env-*.ts` for deployed stages, from that stack's outputs:
