@@ -1,11 +1,17 @@
 {%- if auth == "cognito" -%}
+import type { User } from "oidc-client-ts";
 import { useCallback, useEffect, useRef } from "react";
 import { useAuth } from "react-oidc-context";
+
+// Renew tokens this close to expiry so they do not lapse in flight.
+const MIN_TOKEN_LIFETIME_SECONDS = 60;
 
 export const useAuthenticatedFetch = (): typeof fetch => {
     const { user, signinSilent, signinRedirect } = useAuth();
     // A ref keeps the returned fetch stable while tokens renew in the background.
     const userRef = useRef(user);
+    // Concurrent calls share one renewal.
+    const renewalRef = useRef<Promise<User | null> | null>(null);
 
     useEffect(() => {
         userRef.current = user;
@@ -14,10 +20,17 @@ export const useAuthenticatedFetch = (): typeof fetch => {
     return useCallback(
         async (input: RequestInfo | URL, init?: RequestInit) => {
             const current = userRef.current;
-            let accessToken = current && !current.expired ? current.access_token : null;
+            let accessToken =
+                current &&
+                (current.expires_in ?? Number.POSITIVE_INFINITY) >= MIN_TOKEN_LIFETIME_SECONDS
+                    ? current.access_token
+                    : null;
 
             if (!accessToken) {
-                accessToken = (await signinSilent())?.access_token ?? null;
+                renewalRef.current ??= signinSilent().finally(() => {
+                    renewalRef.current = null;
+                });
+                accessToken = (await renewalRef.current)?.access_token ?? null;
             }
 
             if (!accessToken) {
