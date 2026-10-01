@@ -2,10 +2,12 @@ import { useCallback } from "react";
 import { useAuth } from "react-oidc-context";
 
 /**
+ * Signs out through Cognito's hosted /logout.
+ *
  * Cognito's discovery document has no end_session_endpoint, so AuthProvider seeds it with the
  * hosted domain's /logout. Cognito's /logout needs client_id and logout_uri (one of the client's
- * logout URLs). signoutRedirect removes the stored user and sets activeNavigator, so AuthGuard
- * does not start a new login while the browser leaves.
+ * logout URLs). signoutRedirect revokes the refresh token, removes the stored user and sets
+ * activeNavigator, so AuthGuard does not start a new login while the browser leaves.
  */
 export const useLogout = (): (() => Promise<void>) => {
     const { signoutRedirect } = useAuth();
