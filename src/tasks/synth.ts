@@ -39,9 +39,28 @@ export const synthTask = createSynthTask(
                 list.push(".sld-dns-control.json.liquid");
             }
 
-            if (!context.features?.includes("auth0")) {
+            const features = context.features ?? [];
+
+            if (!(features.includes("auth0") || features.includes("cognito"))) {
                 list.push("src/components/AuthGuard");
-                list.push("src/hooks/useAuthenticatedFetch.ts");
+                list.push("src/hooks/useAuthenticatedFetch.ts.liquid");
+            }
+
+            if (!features.includes("cognito")) {
+                list.push("src/utils/config.ts.liquid");
+                list.push("src/utils/signOut.ts");
+                list.push("src/components/UserMenu.tsx.liquid");
+                list.push("cdk/src/cognito-auth.ts.liquid");
+                list.push("cdk/emails");
+            }
+
+            if (!features.includes("cognito-admin")) {
+                list.push("src/cognito");
+                list.push("src/hooks/useIsAdmin.ts");
+                list.push("src/queries/admin-*.ts");
+                list.push("src/mutations/admin-*.ts");
+                list.push("src/routes/admin");
+                list.push("src/utils/cognito-error.ts");
             }
 
             return list;

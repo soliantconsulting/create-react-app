@@ -1,5 +1,8 @@
 import { ErrorCard } from "#/components/ErrorCard.js";
 import { FullPageSpinner } from "#/components/FullPageSpinner.js";
+{%- if features contains "cognito" %}
+import { UserMenu } from "#/components/UserMenu.js";
+{%- endif %}
 import type { QueryOptionsFactory } from "#/queries/index.js";
 import { AppBar, Box, Container, Toolbar, Typography } from "@mui/material";
 import type { QueryClient } from "@tanstack/react-query";
@@ -9,6 +12,9 @@ import type { ReactNode } from "react";
 export type RootRouterContext = {
     queryClient: QueryClient;
     qof: QueryOptionsFactory;
+    {%- if features contains "cognito-admin" %}
+    isAdmin: boolean;
+    {%- endif %}
 };
 
 const Root = (): ReactNode => {
@@ -19,6 +25,9 @@ const Root = (): ReactNode => {
                     <Typography variant="h6" component="div">
                         {{project.title}}
                     </Typography>
+                    {%- if features contains "cognito" %}
+                    <UserMenu />
+                    {%- endif %}
                 </Toolbar>
             </AppBar>
             <Box component="main" sx={{ '{{' }} py: 2 }}>

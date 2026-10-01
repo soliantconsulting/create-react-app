@@ -1,0 +1,160 @@
+{%- if features contains "auth0" -%}
+import { useAuth0 } from "@auth0/auth0-react";
+{%- endif %}
+import type { ReactNode } from "react";
+{%- if features contains "cognito" %}
+import { ErrorResponse, ErrorTimeout } from "oidc-client-ts";
+import { useEffect, useRef, useState } from "react";
+import { hasAuthParams, useAuth } from "react-oidc-context";
+{%- else %}
+import { useEffect } from "react";
+{%- endif %}
+import { FullPageSpinner } from "#/components/FullPageSpinner.js";
+{%- if features contains "cognito" %}
+import { isSigningOut } from "#/utils/signOut.js";
+{%- endif %}
+import { AuthError } from "./AuthError.js";
+
+type Props = {
+    children: ReactNode;
+};
+{%- if features contains "cognito" %}
+
+const silentRenewRetryMs = 30_000;
+{%- endif %}
+{%- if features contains "auth0" %}
+
+export const AuthGuard = ({ children }: Props): ReactNode => {
+    const { isAuthenticated, isLoading, loginWithRedirect, error } = useAuth0();
+
+    useEffect(() => {
+        if (isLoading || isAuthenticated || error) {
+            return;
+        }
+
+        void loginWithRedirect();
+    }, [isLoading, isAuthenticated, error, loginWithRedirect]);
+
+    if (error) {
+        return <AuthError error={error} />;
+    }
+
+    if (isAuthenticated) {
+        return children;
+    }
+
+    return <FullPageSpinner />;
+};
+{%- endif %}
+{%- if features contains "cognito" %}
+
+export const AuthGuard = ({ children }: Props): ReactNode => {
+    const {
+        user,
+        isAuthenticated,
+        isLoading,
+        activeNavigator,
+        signinSilent,
+        signinRedirect,
+        removeUser,
+        error,
+    } = useAuth();
+    const silentSigninStarted = useRef(false);
+    const [silentSigninDone, setSilentSigninDone] = useState(false);
+    const silentSigninFailed = error?.source === "renewSilent" || error?.source === "signinSilent";
+    // Cognito rejects the refresh token with invalid_grant once the session ended: it expired, was
+    // revoked by a global sign-out, or the user was disabled. That calls for a new sign-in. Any other
+    // refresh failure (network, throttling) may be transient, so the page stays and the refresh is
+    // retried while the access token is still valid.
+    const sessionEnded =
+        silentSigninFailed &&
+        error.innerError instanceof ErrorResponse &&
+        error.innerError.error === "invalid_grant";
+    // isAuthenticated is only recomputed when a user loads, so it stays true after expiry.
+    const tokensExpired = silentSigninFailed && Boolean(user?.expired);
+    const mustSignIn = !isAuthenticated || sessionEnded || tokensExpired;
+    const hasFatalError = error !== undefined && !silentSigninFailed;
+    const hasRefreshToken = Boolean(user?.refresh_token);
+
+    useEffect(() => {
+        if (
+            hasAuthParams() ||
+            isSigningOut() ||
+            isLoading ||
+            activeNavigator ||
+            !mustSignIn ||
+            hasFatalError
+        ) {
+            return;
+        }
+
+        // After reopening the app the access token may have expired while the refresh token is
+        // still valid; try that before sending the user to the login page. The ref stops StrictMode's
+        // second effect run from redirecting while the first run's attempt is still in flight.
+        if (hasRefreshToken && !sessionEnded && !silentSigninDone) {
+            if (!silentSigninStarted.current) {
+                silentSigninStarted.current = true;
+                void signinSilent().finally(() => {
+                    setSilentSigninDone(true);
+                });
+            }
+
+            return;
+        }
+
+        const { location } = window;
+        const returnTo = `${location.pathname}${location.search}${location.hash}`;
+
+        void (async () => {
+            if (sessionEnded) {
+                await removeUser();
+            }
+
+            await signinRedirect({ state: { returnTo } });
+        })();
+    }, [
+        isLoading,
+        activeNavigator,
+        mustSignIn,
+        hasFatalError,
+        sessionEnded,
+        hasRefreshToken,
+        silentSigninDone,
+        removeUser,
+        signinSilent,
+        signinRedirect,
+    ]);
+
+    // oidc-client-ts only retries a failed automatic renewal after a timeout, so without this the
+    // renewal stops after a single network blip. Each failed attempt sets a new error, re-arming the
+    // retry until it succeeds, the session turns out to have ended, or the tokens expire.
+    useEffect(() => {
+        if (
+            mustSignIn ||
+            error === undefined ||
+            !silentSigninFailed ||
+            error.innerError instanceof ErrorTimeout
+        ) {
+            return;
+        }
+
+        const timeout = setTimeout(() => {
+            void signinSilent();
+        }, silentRenewRetryMs);
+
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [mustSignIn, error, silentSigninFailed, signinSilent]);
+
+    if (error && hasFatalError) {
+        return <AuthError error={error} />;
+    }
+
+    if (!mustSignIn) {
+        return children;
+    }
+
+    return <FullPageSpinner />;
+};
+{%- endif %}

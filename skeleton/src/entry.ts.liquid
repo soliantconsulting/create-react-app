@@ -8,4 +8,23 @@ if (typeof Temporal === "undefined") {
     await import("temporal-polyfill/global");
 }
 
+{% if features contains "cognito" -%}
+// Cognito IDs are provisioned by CDK and delivered at runtime, so they must be loaded before the
+// app renders.
+const { loadConfig } = await import("./utils/config.js");
+
+try {
+    await loadConfig();
+} catch (error) {
+    // Nothing can render without the config, so at least tell the user why the page is empty.
+    const root = document.getElementById("root");
+
+    if (root) {
+        root.textContent = `The application could not be started: ${error instanceof Error ? error.message : String(error)}`;
+    }
+
+    throw error;
+}
+
+{% endif -%}
 await import("./main.js");

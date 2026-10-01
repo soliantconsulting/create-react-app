@@ -1,0 +1,43 @@
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { Box, Button, Menu, MenuItem } from "@mui/material";
+import { bindMenu, bindTrigger, usePopupState } from "material-ui-popup-state/hooks";
+import type { ReactNode } from "react";
+import { useAuth } from "react-oidc-context";
+{%- if features contains "cognito-admin" %}
+import { ButtonLink } from "#/components/Link/index.js";
+import { useIsAdmin } from "#/hooks/useIsAdmin.js";
+{%- endif %}
+import { signOut } from "#/utils/signOut.js";
+
+export const UserMenu = (): ReactNode => {
+    const auth = useAuth();
+    const popupState = usePopupState({ variant: "popover", popupId: "user-menu" });
+    {%- if features contains "cognito-admin" %}
+    const isAdmin = useIsAdmin();
+    {%- endif %}
+
+    return (
+        <Box sx={{ '{{' }} ml: "auto", display: "flex", alignItems: "center", gap: 1 }}>
+            {%- if features contains "cognito-admin" %}
+            {isAdmin && (
+                <ButtonLink to="/admin/users" color="inherit">
+                    Admin
+                </ButtonLink>
+            )}
+            {%- endif %}
+            <Button color="inherit" startIcon={<AccountCircleIcon />} {...bindTrigger(popupState)}>
+                {auth.user?.profile.email ?? "Account"}
+            </Button>
+            <Menu {...bindMenu(popupState)}>
+                <MenuItem
+                    onClick={() => {
+                        popupState.close();
+                        void signOut(auth);
+                    }}
+                >
+                    Sign out
+                </MenuItem>
+            </Menu>
+        </Box>
+    );
+};
