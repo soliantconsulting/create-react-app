@@ -1,11 +1,11 @@
 import { Button, Card, CardActions, CardContent, Container, Typography } from "@mui/material";
 import type { ReactNode } from "react";
 
-type Props = {
+type AuthErrorProps = {
     error: Error;
 };
 
-export const AuthError = ({ error }: Props): ReactNode => {
+export const AuthError = ({ error }: AuthErrorProps): ReactNode => {
     return (
         <Container maxWidth="sm" sx={{ my: 2 }}>
             <Card>

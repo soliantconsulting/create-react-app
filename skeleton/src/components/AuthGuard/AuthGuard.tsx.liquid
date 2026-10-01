@@ -5,7 +5,7 @@ import { hasAuthParams, useAuth } from "react-oidc-context";
 import { FullPageSpinner } from "#/components/FullPageSpinner.js";
 import { AuthError } from "./AuthError.js";
 
-type Props = {
+type AuthGuardProps = {
     children: ReactNode;
 };
 
@@ -15,12 +15,13 @@ const FATAL_ERROR_SOURCES: ReadonlySet<string> = new Set([
     "signoutRedirect",
 ]);
 
-export const AuthGuard = ({ children }: Props): ReactNode => {
+export const AuthGuard = ({ children }: AuthGuardProps): ReactNode => {
     const { user, isAuthenticated, isLoading, activeNavigator, error, signinRedirect, signinSilent } =
         useAuth();
     // "idle" until a refresh-token attempt starts; that attempt then owns the redirect.
     const silentPhase = useRef<"idle" | "attempted">("idle");
-    // Renew errors (renewSilent, signinSilent) fall through to a new sign-in. The others would loop.
+    // Renew errors (renewSilent, signinSilent) fall through to a new sign-in.
+    // The others would loop or hang.
     const fatalError = error && FATAL_ERROR_SOURCES.has(error.source) ? error : undefined;
 
     useEffect(() => {
@@ -85,11 +86,11 @@ import { useEffect } from "react";
 import { FullPageSpinner } from "#/components/FullPageSpinner.js";
 import { AuthError } from "./AuthError.js";
 
-type Props = {
+type AuthGuardProps = {
     children: ReactNode;
 };
 
-export const AuthGuard = ({ children }: Props): ReactNode => {
+export const AuthGuard = ({ children }: AuthGuardProps): ReactNode => {
     const { isAuthenticated, isLoading, loginWithRedirect, error } = useAuth0();
 
     useEffect(() => {
