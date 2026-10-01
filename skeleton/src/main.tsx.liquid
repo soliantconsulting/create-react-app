@@ -143,8 +143,13 @@ root.render(
                         redirect_uri={window.location.origin}
                         scope={import.meta.env.VITE_APP_COGNITO_SCOPE}
                         userStore={userStore}
-                        metadataSeed={{ '{{' }} end_session_endpoint: `${import.meta.env.VITE_APP_COGNITO_DOMAIN}/logout` }}
+                        metadataSeed={{ '{{' }}
+                            end_session_endpoint: `${import.meta.env.VITE_APP_COGNITO_DOMAIN}/logout`,
+                            revocation_endpoint: `${import.meta.env.VITE_APP_COGNITO_DOMAIN}/oauth2/revoke`,
+                        }}
                         automaticSilentRenew
+                        revokeTokensOnSignout
+                        revokeTokenTypes={["refresh_token"]}
                         onSigninCallback={(user) => {
                             const state = user?.state as { returnTo?: string } | undefined;
                             void router.navigate({ to: state?.returnTo ?? "/", replace: true });
