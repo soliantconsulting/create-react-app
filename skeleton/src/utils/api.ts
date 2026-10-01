@@ -1,5 +1,12 @@
 import { JsonApiError } from "@jsonapi-serde/client";
-import { isPlainArray, isPlainObject } from "@tanstack/react-router";
+
+// Removed from @tanstack/react-router exports in newer versions.
+const isPlainArray = (value: unknown): value is unknown[] =>
+    Array.isArray(value) && value.length === Object.keys(value).length;
+
+const isPlainObject = (value: unknown): value is object =>
+    Object.prototype.toString.call(value) === "[object Object]" &&
+    (Object.getPrototypeOf(value) === null || Object.getPrototypeOf(value) === Object.prototype);
 
 export const apiUrl = (path: string): URL => new URL(path, import.meta.env.VITE_APP_API_ENDPOINT);
 
