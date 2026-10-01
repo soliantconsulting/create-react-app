@@ -151,8 +151,15 @@ root.render(
                         revokeTokensOnSignout
                         revokeTokenTypes={["refresh_token"]}
                         onSigninCallback={(user) => {
-                            const state = user?.state as { returnTo?: string } | undefined;
-                            void router.navigate({ to: state?.returnTo ?? "/", replace: true });
+                            const state = user?.state;
+                            const returnTo =
+                                typeof state === "object" &&
+                                state !== null &&
+                                "returnTo" in state &&
+                                typeof state.returnTo === "string"
+                                    ? state.returnTo
+                                    : "/";
+                            void router.navigate({ to: returnTo, replace: true });
                         }}
                     >
                         {children}
