@@ -27,6 +27,10 @@ The app's origin (for example `http://localhost:3010`, no trailing slash) must b
 client's callback and logout URLs in the Cognito project.
 
 Use `useLogout()` from `src/hooks/useLogout.ts` for a logout button.
+
+Tokens are stored in `localStorage`, the same as the Auth0 setup's `cacheLocation="localstorage"`,
+so a session survives reloads and new tabs. The tradeoff is that any script running on the page can
+read them, so an XSS bug would expose them.
 {%- endif %}
 {%- if stagingDomain %}
 

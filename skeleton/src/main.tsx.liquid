@@ -78,6 +78,7 @@ declare module "@tanstack/react-router" {
 }
 {%- if auth == "cognito" %}
 
+// localStorage keeps the session across reloads and tabs, but any script on the page can read it.
 const userStore = new WebStorageStateStore({ store: window.localStorage });
 {%- endif %}
 
