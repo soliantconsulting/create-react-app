@@ -23,6 +23,13 @@ new AppStack(app, "{{project.name}}-staging", {
         VITE_APP_SENTRY_TRACES_SAMPLE_RATE: "0",
         {%- endif %}
     },
+    {%- if features contains "cognito" %}
+    cognito: {
+        domainPrefix: "{{cognitoSettings.domainPrefix}}-staging",
+        // ses: { fromEmail: "no-reply@example.com", fromName: "{{project.title}}" },
+        allowLocalhost: true,
+    },
+    {%- endif %}
 });
 
 app.synth();

@@ -26,6 +26,13 @@ new AppStack(app, "{{project.name}}-production", {
         VITE_APP_SENTRY_TRACES_SAMPLE_RATE: "0",
         {%- endif %}
     },
+    {%- if features contains "cognito" %}
+    cognito: {
+        domainPrefix: "{{cognitoSettings.domainPrefix}}-production",
+        // ses: { fromEmail: "no-reply@example.com", fromName: "{{project.title}}" },
+        allowLocalhost: false,
+    },
+    {%- endif %}
 });
 
 app.synth();
