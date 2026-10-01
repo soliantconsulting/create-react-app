@@ -2,38 +2,32 @@ import { ListrEnquirerPromptAdapter } from "@listr2/prompt-adapter-enquirer";
 import type { AwsEnvContext, ProjectContext } from "@soliantconsulting/starter-lib";
 import type { ListrTask } from "listr2";
 
-type Feature = "auth0" | "cognito";
-export type AuthProvider = "auth0" | "cognito";
+type AuthProvider = "auth0" | "cognito";
 
 export type FeaturesContext = {
-    features: Feature[];
     auth: AuthProvider | null;
 };
 
-export const resolveAuthProvider = (features: readonly Feature[]): AuthProvider | null => {
-    const providers = features.filter(
-        (feature): feature is AuthProvider => feature === "auth0" || feature === "cognito",
-    );
-
-    if (providers.length > 1) {
+export const resolveAuthProvider = (features: readonly AuthProvider[]): AuthProvider | null => {
+    if (features.length > 1) {
         throw new Error("Pick either Auth0 or Cognito, not both");
     }
 
-    return providers[0] ?? null;
+    return features[0] ?? null;
 };
 
 export const featuresTask: ListrTask<Partial<ProjectContext & AwsEnvContext & FeaturesContext>> = {
     title: "Select features",
     task: async (context, task): Promise<void> => {
         const prompt = task.prompt(ListrEnquirerPromptAdapter);
-        const features = await prompt.run<Feature[]>({
+        const features = await prompt.run<AuthProvider[]>({
             type: "multiselect",
             message: "Features:",
             choices: [
                 { message: "Auth0", name: "auth0" },
                 { message: "Cognito", name: "cognito" },
             ],
-            validate: (value: Feature[]) => {
+            validate: (value: AuthProvider[]) => {
                 try {
                     resolveAuthProvider(value);
                     return true;
@@ -44,6 +38,5 @@ export const featuresTask: ListrTask<Partial<ProjectContext & AwsEnvContext & Fe
         });
 
         context.auth = resolveAuthProvider(features);
-        context.features = features;
     },
 };

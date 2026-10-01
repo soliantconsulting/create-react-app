@@ -51,7 +51,6 @@ await runPipeline({
             authToken: "sntrys_example",
             authTokenId: "0",
         },
-        features: noauth ? [] : [cognito ? "cognito" : "auth0"],
         auth: noauth ? null : cognito ? "cognito" : "auth0",
     } satisfies BaseContext,
 });
