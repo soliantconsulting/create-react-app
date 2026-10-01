@@ -1,6 +1,6 @@
 import { JsonApiError } from "@jsonapi-serde/client";
 
-// Removed from @tanstack/react-router exports in newer versions.
+// Plain-value checks for extendedReplaceEqualDeep.
 const isPlainArray = (value: unknown): value is unknown[] =>
     Array.isArray(value) && value.length === Object.keys(value).length;
 
