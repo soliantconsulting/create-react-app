@@ -9,6 +9,29 @@
 
 Favicons are generated from `src/assets/favicon.svg` and injected into `index.html` at build
 time. To change the favicon, replace that SVG.
+{%- if auth == "cognito" %}
+
+## Using Cognito instead of Auth0
+
+Login uses the user pool created with `create-cognito`. Fill in `.env` locally, and `buildEnv` in
+`cdk/src/env-*.ts` for deployed stages, from that stack's outputs:
+
+| Variable | Stack output |
+| --- | --- |
+| `VITE_APP_COGNITO_AUTHORITY` | `Issuer` |
+| `VITE_APP_COGNITO_CLIENT_ID` | `SpaClientId` |
+| `VITE_APP_COGNITO_DOMAIN` | `HostedDomain` |
+| `VITE_APP_COGNITO_SCOPE` | `openid email profile`, plus `ApiScope` if the API checks scopes (the starter API does not) |
+
+The app's origin (for example `http://localhost:3010`, no trailing slash) must be in the SPA
+client's callback and logout URLs in the Cognito project.
+
+Use `useLogout()` from `src/hooks/useLogout.ts` for a logout button.
+
+Tokens are stored in `localStorage`, the same as the Auth0 setup's `cacheLocation="localstorage"`,
+so a session survives reloads and new tabs. The tradeoff is that any script running on the page can
+read them, so an XSS bug would expose them.
+{%- endif %}
 {%- if stagingDomain %}
 
 ## Staging DNS

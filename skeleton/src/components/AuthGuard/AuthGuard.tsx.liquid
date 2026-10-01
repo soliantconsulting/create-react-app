@@ -1,0 +1,114 @@
+{%- if auth == "cognito" -%}
+import type { ReactNode } from "react";
+import { useEffect, useRef } from "react";
+import { hasAuthParams, useAuth } from "react-oidc-context";
+import { FullPageSpinner } from "#/components/FullPageSpinner.js";
+import { AuthError } from "./AuthError.js";
+
+type AuthGuardProps = {
+    children: ReactNode;
+};
+
+const FATAL_ERROR_SOURCES: ReadonlySet<string> = new Set([
+    "signinCallback",
+    "signinRedirect",
+    "signoutRedirect",
+]);
+
+export const AuthGuard = ({ children }: AuthGuardProps): ReactNode => {
+    const { user, isAuthenticated, isLoading, activeNavigator, error, signinRedirect, signinSilent } =
+        useAuth();
+    // "idle" until a refresh-token attempt starts; that attempt then owns the redirect.
+    const silentPhase = useRef<"idle" | "attempted">("idle");
+    // Renew errors (renewSilent, signinSilent) fall through to a new sign-in.
+    // The others would loop or hang.
+    const fatalError = error && FATAL_ERROR_SOURCES.has(error.source) ? error : undefined;
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            silentPhase.current = "idle";
+            return;
+        }
+
+        if (
+            hasAuthParams() ||
+            isLoading ||
+            activeNavigator ||
+            fatalError ||
+            silentPhase.current === "attempted"
+        ) {
+            return;
+        }
+
+        const { location } = window;
+        const redirect = (): void => {
+            void signinRedirect({
+                state: { returnTo: `${location.pathname}${location.search}${location.hash}` },
+            });
+        };
+
+        if (user?.refresh_token) {
+            // An expired access token is not renewed automatically on load, so try the refresh token first.
+            silentPhase.current = "attempted";
+            void signinSilent().then((renewed) => {
+                if (!renewed) {
+                    redirect();
+                }
+            });
+            return;
+        }
+
+        redirect();
+    }, [
+        user,
+        isLoading,
+        isAuthenticated,
+        activeNavigator,
+        fatalError,
+        signinRedirect,
+        signinSilent,
+    ]);
+
+    if (fatalError) {
+        return <AuthError error={fatalError} />;
+    }
+
+    if (isAuthenticated) {
+        return children;
+    }
+
+    return <FullPageSpinner />;
+};
+{%- else -%}
+import { useAuth0 } from "@auth0/auth0-react";
+import type { ReactNode } from "react";
+import { useEffect } from "react";
+import { FullPageSpinner } from "#/components/FullPageSpinner.js";
+import { AuthError } from "./AuthError.js";
+
+type AuthGuardProps = {
+    children: ReactNode;
+};
+
+export const AuthGuard = ({ children }: AuthGuardProps): ReactNode => {
+    const { isAuthenticated, isLoading, loginWithRedirect, error } = useAuth0();
+
+    useEffect(() => {
+        if (isLoading || isAuthenticated || error) {
+            return;
+        }
+
+        void loginWithRedirect();
+    }, [isLoading, isAuthenticated, error, loginWithRedirect]);
+
+    if (error) {
+        return <AuthError error={error} />;
+    }
+
+    if (isAuthenticated) {
+        return children;
+    }
+
+    return <FullPageSpinner />;
+};
+{%- endif %}

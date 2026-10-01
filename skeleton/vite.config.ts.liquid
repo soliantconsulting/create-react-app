@@ -86,10 +86,16 @@ export default defineConfig({
                             name: "zod",
                             test: /node_modules[\\/]zod/,
                         },
-                        {%- if features contains "auth0" %}
+                        {%- if auth == "auth0" %}
                         {
                             name: "auth",
                             test: /node_modules[\\/]@auth0/,
+                        },
+                        {%- endif %}
+                        {%- if auth == "cognito" %}
+                        {
+                            name: "auth",
+                            test: /node_modules[\\/](react-oidc-context|oidc-client-ts)/,
                         },
                         {%- endif %}
                     ],

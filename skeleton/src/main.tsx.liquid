@@ -1,5 +1,11 @@
-{%- if features contains "auth0" -%}
+{%- if auth == "auth0" -%}
 import { Auth0Provider } from "@auth0/auth0-react";
+{%- endif %}
+{%- if auth == "cognito" -%}
+import { WebStorageStateStore } from "oidc-client-ts";
+import { AuthProvider } from "react-oidc-context";
+{%- endif %}
+{%- if auth -%}
 import { AuthGuard } from "#/components/AuthGuard/index.js";
 import { useAuthenticatedFetch } from "#/hooks/useAuthenticatedFetch.js";
 {%- endif %}
@@ -70,9 +76,13 @@ declare module "@tanstack/react-router" {
         router: typeof router;
     }
 }
+{%- if auth == "cognito" %}
+
+const userStore = new WebStorageStateStore({ store: window.localStorage });
+{%- endif %}
 
 const App = (): ReactNode => {
-    {%- if features contains "auth0" %}
+    {%- if auth %}
     const authFetch = useAuthenticatedFetch();
     {%- else %}
     const authFetch = fetch;
@@ -106,7 +116,7 @@ root.render(
                 (children) => (
                     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
                 ),
-                {%- if features contains "auth0" %}
+                {%- if auth == "auth0" %}
                 (children) => (
                     <Auth0Provider
                         domain={import.meta.env.VITE_APP_AUTH0_DOMAIN}
@@ -124,6 +134,39 @@ root.render(
                         {children}
                     </Auth0Provider>
                 ),
+                {%- endif %}
+                {%- if auth == "cognito" %}
+                (children) => (
+                    <AuthProvider
+                        authority={import.meta.env.VITE_APP_COGNITO_AUTHORITY}
+                        client_id={import.meta.env.VITE_APP_COGNITO_CLIENT_ID}
+                        redirect_uri={window.location.origin}
+                        scope={import.meta.env.VITE_APP_COGNITO_SCOPE}
+                        userStore={userStore}
+                        metadataSeed={{ '{{' }}
+                            end_session_endpoint: `${import.meta.env.VITE_APP_COGNITO_DOMAIN}/logout`,
+                            revocation_endpoint: `${import.meta.env.VITE_APP_COGNITO_DOMAIN}/oauth2/revoke`,
+                        }}
+                        automaticSilentRenew
+                        revokeTokensOnSignout
+                        revokeTokenTypes={["refresh_token"]}
+                        onSigninCallback={(user) => {
+                            const state = user?.state;
+                            const returnTo =
+                                typeof state === "object" &&
+                                state !== null &&
+                                "returnTo" in state &&
+                                typeof state.returnTo === "string"
+                                    ? state.returnTo
+                                    : "/";
+                            void router.navigate({ to: returnTo, replace: true });
+                        }}
+                    >
+                        {children}
+                    </AuthProvider>
+                ),
+                {%- endif %}
+                {%- if auth %}
                 (children) => <AuthGuard>{children}</AuthGuard>,
                 {%- endif %}
                 (children) => <SnackbarProvider>{children}</SnackbarProvider>,

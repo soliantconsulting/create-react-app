@@ -1,0 +1,93 @@
+{%- if auth == "cognito" -%}
+import type { User } from "oidc-client-ts";
+import { useCallback, useEffect, useRef } from "react";
+import { useAuth } from "react-oidc-context";
+
+// Renew tokens this close to expiry so they do not lapse in flight.
+const MIN_TOKEN_LIFETIME_SECONDS = 60;
+
+export const useAuthenticatedFetch = (): typeof fetch => {
+    const { user, signinSilent, signinRedirect } = useAuth();
+    // A ref keeps the returned fetch stable while tokens renew in the background.
+    const userRef = useRef(user);
+    // Concurrent calls share one renewal.
+    const renewalRef = useRef<Promise<User | null> | null>(null);
+
+    useEffect(() => {
+        userRef.current = user;
+    }, [user]);
+
+    return useCallback(
+        async (input: RequestInfo | URL, init?: RequestInit) => {
+            const current = userRef.current;
+            let accessToken =
+                current &&
+                (current.expires_in ?? Number.POSITIVE_INFINITY) >= MIN_TOKEN_LIFETIME_SECONDS
+                    ? current.access_token
+                    : null;
+
+            if (!accessToken) {
+                renewalRef.current ??= signinSilent().finally(() => {
+                    renewalRef.current = null;
+                });
+                accessToken = (await renewalRef.current)?.access_token ?? null;
+            }
+
+            if (!accessToken) {
+                const { location } = window;
+                await signinRedirect({
+                    state: { returnTo: `${location.pathname}${location.search}${location.hash}` },
+                });
+                return new Promise(() => {
+                    // Will never resolve
+                });
+            }
+
+            const modifiedInit = init ?? {};
+            modifiedInit.headers = new Headers(modifiedInit.headers);
+            modifiedInit.headers.set("Authorization", `Bearer ${accessToken}`);
+
+            return await fetch(input, modifiedInit);
+        },
+        [signinSilent, signinRedirect],
+    );
+};
+{%- else -%}
+import { useAuth0 } from "@auth0/auth0-react";
+import { useCallback } from "react";
+
+export const useAuthenticatedFetch = (): typeof fetch => {
+    const { getAccessTokenSilently, loginWithRedirect } = useAuth0();
+
+    return useCallback(
+        async (input: RequestInfo | URL, init?: RequestInit) => {
+            let accessToken: string | undefined;
+
+            try {
+                accessToken = await getAccessTokenSilently();
+            } catch {
+                // Falls through to the login redirect below.
+            }
+
+            if (!accessToken) {
+                const { location } = window;
+                await loginWithRedirect({
+                    appState: {
+                        returnTo: `${location.pathname}${location.search}${location.hash}`,
+                    },
+                });
+                return new Promise(() => {
+                    // Will never resolve
+                });
+            }
+
+            const modifiedInit = init ?? {};
+            modifiedInit.headers = new Headers(modifiedInit.headers);
+            modifiedInit.headers.set("Authorization", `Bearer ${accessToken}`);
+
+            return await fetch(input, modifiedInit);
+        },
+        [getAccessTokenSilently, loginWithRedirect],
+    );
+};
+{%- endif %}

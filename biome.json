@@ -6,6 +6,7 @@
             "biome.json",
             "commitlint.config.cjs",
             "src/**/*",
+            "test/**/*",
             "skeleton/**/*",
             "!skeleton/src/assets",
             "!skeleton/src/routeTree.gen.ts"
