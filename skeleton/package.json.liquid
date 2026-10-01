@@ -22,7 +22,7 @@
         "vite-plugin-hashed-favicons": "2.1.1"
     },
     "dependencies": {
-        {%- if features contains "auth0" %}
+        {%- if auth == "auth0" %}
         "@auth0/auth0-react": "^2.15.1",
         {%- endif %}
         {%- if auth == "cognito" %}

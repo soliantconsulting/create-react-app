@@ -15,7 +15,7 @@ new AppStack(app, "{{project.name}}-production", {
     domainName: "",
     buildEnv: {
         VITE_APP_API_ENDPOINT: "",
-        {%- if features contains "auth0" %}
+        {%- if auth == "auth0" %}
         VITE_APP_AUTH0_DOMAIN: "",
         VITE_APP_AUTH0_CLIENT_ID: "",
         VITE_APP_AUTH0_AUDIENCE: "",
