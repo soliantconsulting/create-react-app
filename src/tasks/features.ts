@@ -26,24 +26,24 @@ export const featuresTask: ListrTask<Partial<ProjectContext & AwsEnvContext & Fe
     title: "Select features",
     task: async (context, task): Promise<void> => {
         const prompt = task.prompt(ListrEnquirerPromptAdapter);
+        const features = await prompt.run<Feature[]>({
+            type: "multiselect",
+            message: "Features:",
+            choices: [
+                { message: "Auth0", name: "auth0" },
+                { message: "Cognito", name: "cognito" },
+            ],
+            validate: (value: Feature[]) => {
+                try {
+                    resolveAuthProvider(value);
+                    return true;
+                } catch (error) {
+                    return error instanceof Error ? error.message : false;
+                }
+            },
+        });
 
-        while (true) {
-            const features = await prompt.run<Feature[]>({
-                type: "multiselect",
-                message: "Features:",
-                choices: [
-                    { message: "Auth0", name: "auth0" },
-                    { message: "Cognito", name: "cognito" },
-                ],
-            });
-
-            try {
-                context.auth = resolveAuthProvider(features);
-                context.features = features;
-                return;
-            } catch (error) {
-                task.output = (error as Error).message;
-            }
-        }
+        context.auth = resolveAuthProvider(features);
+        context.features = features;
     },
 };
