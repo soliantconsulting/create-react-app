@@ -1,6 +1,4 @@
 /cdk.out
 /node_modules
 /dist
-/test-synth
-/test-synth-cognito
-/test-synth-noauth
+/test-synth-*

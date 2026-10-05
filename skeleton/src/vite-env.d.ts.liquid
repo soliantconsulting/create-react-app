@@ -2,16 +2,20 @@
 
 interface ImportMetaEnv {
     readonly VITE_APP_API_ENDPOINT: string;
-    {%- if auth == "auth0" %}
+    {%- if features contains "auth0"  %}
     readonly VITE_APP_AUTH0_DOMAIN: string;
     readonly VITE_APP_AUTH0_CLIENT_ID: string;
     readonly VITE_APP_AUTH0_AUDIENCE: string;
     {%- endif %}
-    {%- if auth == "cognito" %}
-    readonly VITE_APP_COGNITO_AUTHORITY: string;
-    readonly VITE_APP_COGNITO_CLIENT_ID: string;
-    readonly VITE_APP_COGNITO_DOMAIN: string;
-    readonly VITE_APP_COGNITO_SCOPE: string;
+    {%- if features contains "cognito" %}
+    readonly VITE_APP_COGNITO_REGION?: string;
+    readonly VITE_APP_COGNITO_USER_POOL_ID?: string;
+    readonly VITE_APP_COGNITO_CLIENT_ID?: string;
+    readonly VITE_APP_COGNITO_DOMAIN?: string;
+    readonly VITE_APP_COGNITO_SCOPE?: string;
+    {%- if features contains "cognito-admin" %}
+    readonly VITE_APP_COGNITO_IDENTITY_POOL_ID?: string;
+    {%- endif %}
     {%- endif %}
     {%- if sentry %}
     readonly VITE_APP_SENTRY_DSN?: string;

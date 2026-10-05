@@ -22,8 +22,12 @@
         "vite-plugin-hashed-favicons": "2.1.1"
     },
     "dependencies": {
-        {%- if auth == "auth0" %}
+        {%- if features contains "auth0" %}
         "@auth0/auth0-react": "^2.15.1",
+        {%- endif %}
+        {%- if features contains "cognito-admin" %}
+        "@aws-sdk/client-cognito-identity-provider": "^3.1143.0",
+        "@aws-sdk/credential-provider-cognito-identity": "^3.972.71",
         {%- endif %}
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -41,13 +45,13 @@
         "material-ui-popup-state": "^5.3.6",
         "mui-rhf-integration": "^8.0.1",
         "notistack": "^3.0.2",
-        {%- if auth == "cognito" %}
+        {%- if features contains "cognito" %}
         "oidc-client-ts": "^3.5.0",
         {%- endif %}
         "react": "^19.2.4",
         "react-dom": "^19.2.4",
         "react-hook-form": "^7.71.2",
-        {%- if auth == "cognito" %}
+        {%- if features contains "cognito" %}
         "react-oidc-context": "^3.3.1",
         {%- endif %}
         "serialize-error": "^13.0.1",

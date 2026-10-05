@@ -1,9 +1,28 @@
+{%- if features contains "cognito-admin" -%}
+import type { CognitoIdentityProviderClient } from "@aws-sdk/client-cognito-identity-provider";
+{%- endif %}
 import { createContext, type ReactNode, useContext } from "react";
+{%- if features contains "cognito-admin" %}
+import { createAdminGroupQueryOptionsFactory } from "#/queries/admin-group.js";
+import { createAdminUserQueryOptionsFactory } from "#/queries/admin-user.js";
+{%- endif %}
 import { createArticleQueryOptionsFactory } from "#/queries/article.js";
+{%- if features contains "cognito-admin" %}
+
+export const createQueryOptionsFactory = (
+    authFetch: typeof fetch,
+    cognitoAdminClient: CognitoIdentityProviderClient,
+) => ({
+    article: createArticleQueryOptionsFactory(authFetch),
+    adminUser: createAdminUserQueryOptionsFactory(cognitoAdminClient),
+    adminGroup: createAdminGroupQueryOptionsFactory(cognitoAdminClient),
+});
+{%- else %}
 
 export const createQueryOptionsFactory = (authFetch: typeof fetch) => ({
     article: createArticleQueryOptionsFactory(authFetch),
 });
+{%- endif %}
 
 export type QueryOptionsFactory = ReturnType<typeof createQueryOptionsFactory>;
 

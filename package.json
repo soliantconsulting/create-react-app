@@ -18,9 +18,7 @@
   },
   "scripts": {
     "test": "tsx --test 'test/**/*.test.ts'",
-    "test-synth": "rm -rf ./test-synth && tsx ./src/test-cli.ts test-synth",
-    "test-synth:cognito": "rm -rf ./test-synth-cognito && tsx ./src/test-cli.ts cognito",
-    "test-synth:noauth": "rm -rf ./test-synth-noauth && tsx ./src/test-cli.ts noauth",
+    "test-synth": "tsx ./src/test-cli.ts",
     "build": "tsc",
     "format": "biome format . --write",
     "check": "biome check . --write"

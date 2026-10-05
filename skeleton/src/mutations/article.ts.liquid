@@ -1,4 +1,4 @@
-{%- if auth -%}
+{%- if features contains "auth0" or features contains "cognito" -%}
 import { useAuthenticatedFetch } from "#/hooks/useAuthenticatedFetch.js";
 {%- endif %}
 import type { articleAttributesSchema } from "#/queries/article.js";
@@ -12,7 +12,7 @@ type CreateArticleValues = {
 };
 
 export const useCreateArticleMutation = (): UseMutationResult<void, Error, CreateArticleValues> => {
-    {%- if auth -%}
+    {%- if features contains "auth0" or features contains "cognito" -%}
     const fetch = useAuthenticatedFetch();
     {%- endif %}
     const queryClient = useQueryClient();
@@ -46,7 +46,7 @@ type UpdateArticleValues = CreateArticleValues & {
 };
 
 export const useUpdateArticleMutation = (): UseMutationResult<void, Error, UpdateArticleValues> => {
-    {%- if auth -%}
+    {%- if features contains "auth0" or features contains "cognito" -%}
     const fetch = useAuthenticatedFetch();
     {%- endif %}
     const queryClient = useQueryClient();
@@ -88,7 +88,7 @@ type DeleteArticleValues = {
 };
 
 export const useDeleteArticleMutation = (): UseMutationResult<void, Error, DeleteArticleValues> => {
-    {%- if auth -%}
+    {%- if features contains "auth0" or features contains "cognito" -%}
     const fetch = useAuthenticatedFetch();
     {%- endif %}
     const queryClient = useQueryClient();

@@ -1,13 +1,21 @@
-{%- if auth == "auth0" -%}
+{%- if features contains "auth0" -%}
 import { Auth0Provider } from "@auth0/auth0-react";
+import { AuthGuard } from "#/components/AuthGuard/index.js";
+import { useAuthenticatedFetch } from "#/hooks/useAuthenticatedFetch.js";
 {%- endif %}
-{%- if auth == "cognito" -%}
+{%- if features contains "cognito" -%}
+import { AuthGuard } from "#/components/AuthGuard/index.js";
+import { useAuthenticatedFetch } from "#/hooks/useAuthenticatedFetch.js";
+import { getAuthority, getConfig } from "#/utils/config.js";
 import { WebStorageStateStore } from "oidc-client-ts";
 import { AuthProvider } from "react-oidc-context";
 {%- endif %}
-{%- if auth -%}
-import { AuthGuard } from "#/components/AuthGuard/index.js";
-import { useAuthenticatedFetch } from "#/hooks/useAuthenticatedFetch.js";
+{%- if features contains "cognito-admin" %}
+import {
+    CognitoAdminClientProvider,
+    useCognitoAdminClient,
+} from "#/cognito/CognitoAdminClient.js";
+import { useIsAdmin } from "#/hooks/useIsAdmin.js";
 {%- endif %}
 import { InlineSpinner } from "#/components/InlineSpinner.js";
 import { MultiProvider } from "#/components/MultiProvider.js";
@@ -66,6 +74,9 @@ const router = createRouter({
         queryClient,
         // Injected through React
         qof: undefined as unknown as QueryOptionsFactory,
+        {%- if features contains "cognito-admin" %}
+        isAdmin: false,
+        {%- endif %}
     },
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
@@ -76,18 +87,26 @@ declare module "@tanstack/react-router" {
         router: typeof router;
     }
 }
-{%- if auth == "cognito" %}
 
+{%- if features contains "cognito" %}
+
+const cognitoConfig = getConfig();
 const userStore = new WebStorageStateStore({ store: window.localStorage });
 {%- endif %}
 
 const App = (): ReactNode => {
-    {%- if auth %}
+    {%- if features contains "auth0" or features contains "cognito" %}
     const authFetch = useAuthenticatedFetch();
     {%- else %}
     const authFetch = fetch;
     {%- endif %}
+    {%- if features contains "cognito-admin" %}
+    const cognitoAdminClient = useCognitoAdminClient();
+    const isAdmin = useIsAdmin();
+    const queryOptionsFactory = createQueryOptionsFactory(authFetch, cognitoAdminClient);
+    {%- else %}
     const queryOptionsFactory = createQueryOptionsFactory(authFetch);
+    {%- endif %}
 
     return (
         <QueryOptionsFactoryProvider factory={queryOptionsFactory}>
@@ -95,6 +114,9 @@ const App = (): ReactNode => {
                 router={router}
                 context={{ '{{' }}
                     qof: queryOptionsFactory,
+                    {%- if features contains "cognito-admin" %}
+                    isAdmin,
+                    {%- endif %}
                 }}
             />
         </QueryOptionsFactoryProvider>
@@ -116,7 +138,7 @@ root.render(
                 (children) => (
                     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
                 ),
-                {%- if auth == "auth0" %}
+                {%- if features contains "auth0" %}
                 (children) => (
                     <Auth0Provider
                         domain={import.meta.env.VITE_APP_AUTH0_DOMAIN}
@@ -134,40 +156,33 @@ root.render(
                         {children}
                     </Auth0Provider>
                 ),
+                (children) => <AuthGuard>{children}</AuthGuard>,
                 {%- endif %}
-                {%- if auth == "cognito" %}
+                {%- if features contains "cognito" %}
                 (children) => (
                     <AuthProvider
-                        authority={import.meta.env.VITE_APP_COGNITO_AUTHORITY}
-                        client_id={import.meta.env.VITE_APP_COGNITO_CLIENT_ID}
+                        authority={getAuthority()}
+                        client_id={cognitoConfig.clientId}
                         redirect_uri={window.location.origin}
-                        scope={import.meta.env.VITE_APP_COGNITO_SCOPE}
-                        userStore={userStore}
+                        scope={cognitoConfig.scope}
                         metadataSeed={{ '{{' }}
-                            end_session_endpoint: `${import.meta.env.VITE_APP_COGNITO_DOMAIN}/logout`,
-                            revocation_endpoint: `${import.meta.env.VITE_APP_COGNITO_DOMAIN}/oauth2/revoke`,
+                            revocation_endpoint: new URL("/oauth2/revoke", cognitoConfig.domain)
+                                .href,
                         }}
-                        automaticSilentRenew
-                        revokeTokensOnSignout
-                        revokeTokenTypes={["refresh_token"]}
+                        userStore={userStore}
                         onSigninCallback={(user) => {
-                            const state = user?.state;
-                            const returnTo =
-                                typeof state === "object" &&
-                                state !== null &&
-                                "returnTo" in state &&
-                                typeof state.returnTo === "string"
-                                    ? state.returnTo
-                                    : "/";
-                            void router.navigate({ to: returnTo, replace: true });
+                            const state = user?.state as { returnTo?: string } | undefined;
+                            // Replaces the URL, which also drops the ?code=…&state=… parameters.
+                            router.history.replace(state?.returnTo ?? "/");
                         }}
                     >
                         {children}
                     </AuthProvider>
                 ),
-                {%- endif %}
-                {%- if auth %}
                 (children) => <AuthGuard>{children}</AuthGuard>,
+                {%- endif %}
+                {%- if features contains "cognito-admin" %}
+                (children) => <CognitoAdminClientProvider>{children}</CognitoAdminClientProvider>,
                 {%- endif %}
                 (children) => <SnackbarProvider>{children}</SnackbarProvider>,
                 (children) => <ConfirmProvider>{children}</ConfirmProvider>,

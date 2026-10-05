@@ -9,7 +9,8 @@
             "test/**/*",
             "skeleton/**/*",
             "!skeleton/src/assets",
-            "!skeleton/src/routeTree.gen.ts"
+            "!skeleton/src/routeTree.gen.ts",
+            "!!test-synth-*"
         ]
     },
     "linter": {

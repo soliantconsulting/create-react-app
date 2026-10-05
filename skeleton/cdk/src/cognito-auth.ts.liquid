@@ -1,0 +1,318 @@
+import { readFileSync } from "node:fs";
+import { Duration, RemovalPolicy, Stack } from "aws-cdk-lib";
+import {
+    AccountRecovery,
+    CfnManagedLoginBranding,
+    ClientAttributes,
+    FeaturePlan,
+    ManagedLoginVersion,
+    Mfa,
+    OAuthScope,
+    ResourceServerScope,
+    UserPool,
+    UserPoolClientIdentityProvider,
+    UserPoolEmail,
+    {%- if features contains "cognito-admin" %}
+    UserPoolGroup,
+    {%- endif %}
+    VerificationEmailStyle,
+} from "aws-cdk-lib/aws-cognito";
+{%- if features contains "cognito-admin" %}
+import {
+    IdentityPool,
+    IdentityPoolProviderUrl,
+    UserPoolAuthenticationProvider,
+} from "aws-cdk-lib/aws-cognito-identitypool";
+import { FederatedPrincipal, PolicyStatement, Role } from "aws-cdk-lib/aws-iam";
+{%- endif %}
+import { Construct } from "constructs";
+
+export type CognitoAuthProps = {
+    // Domain the app is served from, used for the callback and sign-out URLs.
+    appDomainName: string;
+    // Managed login domain prefix, unique per region, without "aws", "amazon" or "cognito".
+    domainPrefix: string;
+    // Allows http://localhost:3010 as callback URL for local development.
+    allowLocalhost: boolean;
+    // Send email via SES instead of Cognito's 50/day sender. The address (or `verifiedDomain`) must
+    // already be verified in SES: Cognito silently drops email sent from an unverified identity.
+    ses?: {
+        fromEmail: string;
+        fromName?: string;
+        replyTo?: string;
+        // Set when the domain of `fromEmail` is verified in SES, so the address itself need not be.
+        verifiedDomain?: string;
+    };
+    // Identifier of the API this app calls, for example "https://api.example.com". Adds a resource
+    // server with an `access` scope and requests that scope at sign-in.
+    apiIdentifier?: string;
+};
+
+const readEmail = (name: string): string =>
+    readFileSync(new URL(`../emails/${name}.html`, import.meta.url), "utf-8");
+
+// Wraps one of the message templates in cdk/emails in the shared layout.
+const renderEmail = (name: string, appUrl: string): string =>
+    readEmail("layout")
+        .replace("%CONTENT%", () => readEmail(name))
+        .replaceAll("%APP_URL%", appUrl);
+
+// Served to the app as /config.json.
+export type CognitoRuntimeConfig = {
+    region: string;
+    userPoolId: string;
+    clientId: string;
+    domain: string;
+    scope: string;
+    {%- if features contains "cognito-admin" %}
+    identityPoolId: string;
+    {%- endif %}
+};
+{%- if features contains "cognito-admin" %}
+
+// Group whose members may manage users. Must match `cognitoAdminGroupName` in the app.
+const cognitoAdminGroupName = "admin";
+{%- endif %}
+
+export class CognitoAuth extends Construct {
+    public readonly runtimeConfig: CognitoRuntimeConfig;
+    public readonly userPool: UserPool;
+
+    public constructor(scope: Construct, id: string, props: CognitoAuthProps) {
+        super(scope, id);
+
+        const appUrl = `https://${props.appDomainName}`;
+
+        const userPool = new UserPool(this, "UserPool", {
+            // Required for managed login.
+            featurePlan: FeaturePlan.ESSENTIALS,
+            selfSignUpEnabled: false,
+            signInAliases: { email: true },
+            signInCaseSensitive: false,
+            autoVerify: { email: true },
+            // A self-service email change only applies once the new address is verified.
+            keepOriginal: { email: true },
+            standardAttributes: {
+                email: { required: true, mutable: true },
+                givenName: { required: false, mutable: true },
+                familyName: { required: false, mutable: true },
+            },
+            mfa: Mfa.{{ cognitoSettings.mfa | upcase }},
+            {%- if cognitoSettings.mfa != "off" %}
+            // Managed login walks users through authenticator app setup only when MFA is required.
+            mfaSecondFactor: { otp: true, sms: false },
+            {%- endif %}
+            accountRecovery: AccountRecovery.EMAIL_ONLY,
+            // Length over complexity, same as the Auth0 tenants.
+            passwordPolicy: {
+                minLength: 12,
+                requireLowercase: false,
+                requireUppercase: false,
+                requireDigits: false,
+                requireSymbols: false,
+                passwordHistorySize: 5,
+                // The invitation email mentions this validity.
+                tempPasswordValidity: Duration.days(7),
+            },
+            email: props.ses
+                ? UserPoolEmail.withSES({
+                      fromEmail: props.ses.fromEmail,
+                      fromName: props.ses.fromName,
+                      replyTo: props.ses.replyTo,
+                      sesVerifiedDomain: props.ses.verifiedDomain,
+                      sesRegion: Stack.of(this).region,
+                  })
+                : undefined,
+            userInvitation: {
+                emailSubject: "Your account has been created",
+                emailBody: renderEmail("invitation", appUrl),
+            },
+            // Also used for forgot password, admin password resets and email change codes.
+            userVerification: {
+                emailStyle: VerificationEmailStyle.CODE,
+                emailSubject: "Your verification code",
+                emailBody: renderEmail("verification-code", appUrl),
+            },
+            deletionProtection: true,
+            removalPolicy: RemovalPolicy.RETAIN,
+        });
+
+        this.userPool = userPool;
+
+        const redirectUrls = [appUrl, ...(props.allowLocalhost ? ["http://localhost:3010"] : [])];
+        const scopes = [OAuthScope.OPENID, OAuthScope.EMAIL, OAuthScope.PROFILE];
+
+        if (props.apiIdentifier) {
+            const apiScope = new ResourceServerScope({
+                scopeName: "access",
+                scopeDescription: "Access the API",
+            });
+            const apiResourceServer = userPool.addResourceServer("ApiResourceServer", {
+                identifier: props.apiIdentifier,
+                scopes: [apiScope],
+            });
+            scopes.push(OAuthScope.resourceServer(apiResourceServer, apiScope));
+        }
+
+        const client = userPool.addClient("AppClient", {
+            // Public SPA client: authorization code flow with PKCE.
+            generateSecret: false,
+            // Sign-in goes through managed login only. Leaving authFlows out would let Cognito
+            // default to SRP, custom and refresh token auth, and refresh token auth conflicts
+            // with rotation. Any key set to false makes CDK send an empty list instead.
+            authFlows: { userSrp: false },
+            // Users may only change these on their own profile.
+            writeAttributes: new ClientAttributes().withStandardAttributes({
+                email: true,
+                givenName: true,
+                familyName: true,
+            }),
+            oAuth: {
+                flows: { authorizationCodeGrant: true },
+                scopes,
+                callbackUrls: redirectUrls,
+                logoutUrls: redirectUrls,
+            },
+            supportedIdentityProviders: [UserPoolClientIdentityProvider.COGNITO],
+            preventUserExistenceErrors: true,
+            accessTokenValidity: Duration.hours(1),
+            idTokenValidity: Duration.hours(1),
+            // Users must sign in again 7 days after their last sign-in.
+            refreshTokenValidity: Duration.days(7),
+            // Rotate refresh tokens on every refresh; rotation does not extend the 7 days.
+            refreshTokenRotationGracePeriod: Duration.seconds(10),
+            enableTokenRevocation: true,
+        });
+
+        const domain = userPool.addDomain("Domain", {
+            cognitoDomain: { domainPrefix: props.domainPrefix },
+            managedLoginVersion: ManagedLoginVersion.NEWER_MANAGED_LOGIN,
+        });
+
+        // Cognito's default style plus the favicon as form logo (light mode only).
+        new CfnManagedLoginBranding(this, "ManagedLoginBranding", {
+            userPoolId: userPool.userPoolId,
+            clientId: client.userPoolClientId,
+            useCognitoProvidedValues: false,
+            settings: {
+                categories: {
+                    global: { colorSchemeMode: "LIGHT" },
+                },
+                components: {
+                    form: {
+                        logo: {
+                            enabled: true,
+                            formInclusion: "IN",
+                            location: "CENTER",
+                            position: "TOP",
+                        },
+                    },
+                },
+            },
+            assets: [
+                {
+                    category: "FORM_LOGO",
+                    colorMode: "LIGHT",
+                    extension: "SVG",
+                    bytes: readFileSync(
+                        new URL("../../src/assets/favicon.svg", import.meta.url),
+                    ).toString("base64"),
+                },
+            ],
+        });
+        {%- if features contains "cognito-admin" %}
+
+        // Exchanges ID tokens for AWS credentials. Only admin group members get a role.
+        const identityPool = new IdentityPool(this, "IdentityPool", {
+            allowUnauthenticatedIdentities: false,
+            // Must stay off: it would let any signed-in user assume the admin role.
+            allowClassicFlow: false,
+            authenticationProviders: {
+                userPools: [
+                    new UserPoolAuthenticationProvider({
+                        userPool,
+                        userPoolClient: client,
+                        // Rejects tokens of deleted or globally signed-out users.
+                        disableServerSideTokenCheck: false,
+                    }),
+                ],
+            },
+            roleMappings: [
+                {
+                    mappingKey: "userPool",
+                    providerUrl: IdentityPoolProviderUrl.userPool(userPool, client),
+                    useToken: true,
+                    // Users without a role in their token get no credentials.
+                    resolveAmbiguousRoles: false,
+                },
+            ],
+        });
+
+        const cognitoAdminRole = new Role(this, "CognitoAdminRole", {
+            description: "Lets admin group members manage the users of the user pool",
+            assumedBy: new FederatedPrincipal(
+                "cognito-identity.amazonaws.com",
+                {
+                    StringEquals: {
+                        "cognito-identity.amazonaws.com:aud": identityPool.identityPoolId,
+                    },
+                    "ForAnyValue:StringLike": {
+                        "cognito-identity.amazonaws.com:amr": "authenticated",
+                    },
+                },
+                "sts:AssumeRoleWithWebIdentity",
+            ),
+            maxSessionDuration: Duration.hours(1),
+        });
+
+        // This user pool only. Roles are defined in this stack, so admins may assign them to users
+        // but not create, change or delete them.
+        cognitoAdminRole.addToPolicy(
+            new PolicyStatement({
+                actions: [
+                    "cognito-idp:ListUsers",
+                    "cognito-idp:ListGroups",
+                    "cognito-idp:GetGroup",
+                    "cognito-idp:ListUsersInGroup",
+                    "cognito-idp:AdminGetUser",
+                    "cognito-idp:AdminListGroupsForUser",
+                    "cognito-idp:AdminCreateUser",
+                    "cognito-idp:AdminDeleteUser",
+                    "cognito-idp:AdminEnableUser",
+                    "cognito-idp:AdminDisableUser",
+                    "cognito-idp:AdminResetUserPassword",
+                    "cognito-idp:AdminSetUserPassword",
+                    "cognito-idp:AdminUpdateUserAttributes",
+                    "cognito-idp:AdminDeleteUserAttributes",
+                    "cognito-idp:AdminUserGlobalSignOut",
+                    "cognito-idp:AdminSetUserMFAPreference",
+                    "cognito-idp:AdminAddUserToGroup",
+                    "cognito-idp:AdminRemoveUserFromGroup",
+                ],
+                resources: [userPool.userPoolArn],
+            }),
+        );
+
+        // Not created via userPool.addGroup(): as a child of the user pool it would be part of the
+        // identity pool's dependency on it, forming a cycle through the role.
+        new UserPoolGroup(this, "CognitoAdminGroup", {
+            userPool,
+            groupName: cognitoAdminGroupName,
+            description: "Can manage users",
+            precedence: 0,
+            role: cognitoAdminRole,
+        });
+        {%- endif %}
+
+        this.runtimeConfig = {
+            region: Stack.of(this).region,
+            userPoolId: userPool.userPoolId,
+            clientId: client.userPoolClientId,
+            domain: domain.baseUrl(),
+            scope: scopes.map((scope) => scope.scopeName).join(" "),
+            {%- if features contains "cognito-admin" %}
+            identityPoolId: identityPool.identityPoolId,
+            {%- endif %}
+        };
+    }
+}
