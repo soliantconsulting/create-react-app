@@ -149,6 +149,8 @@ export class CognitoAuth extends Construct {
             });
             const apiResourceServer = userPool.addResourceServer("ApiResourceServer", {
                 identifier: props.apiIdentifier,
+                // The name defaults to the identifier, and Cognito rejects a URL as a name.
+                userPoolResourceServerName: "API",
                 scopes: [apiScope],
             });
             scopes.push(OAuthScope.resourceServer(apiResourceServer, apiScope));

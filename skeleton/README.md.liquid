@@ -108,7 +108,8 @@ They receive an email with a temporary password and can manage everybody else fr
 ### Login page branding
 
 The managed login pages use Cognito's default style with `src/assets/favicon.svg` as the logo (see
-`ManagedLoginBranding` in `cdk/src/cognito-auth.ts`). To customize it further, edit the style in the
+`ManagedLoginBranding` in `cdk/src/cognito-auth.ts`). Cognito validates the SVG strictly and fails the
+deploy on attributes such as `version` and `xml:space`, so clean up a replacement logo first. To customize it further, edit the style in the
 Cognito console's branding editor, then export it and copy the `Settings` part of the output into
 the construct:
 
