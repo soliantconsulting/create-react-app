@@ -92,6 +92,18 @@ export default defineConfig({
                             test: /node_modules[\\/]@auth0/,
                         },
                         {%- endif %}
+                        {%- if features contains "cognito" %}
+                        {
+                            name: "auth",
+                            test: /node_modules[\\/](oidc-client-ts|react-oidc-context)/,
+                        },
+                        {%- endif %}
+                        {%- if features contains "cognito-admin" %}
+                        {
+                            name: "aws",
+                            test: /node_modules[\\/](@aws-sdk|@smithy|@aws-crypto)/,
+                        },
+                        {%- endif %}
                     ],
                 },
             },
@@ -99,6 +111,10 @@ export default defineConfig({
     },
     server: {
         port: 3010,
+        {%- if features contains "cognito" %}
+        // The Cognito app client only accepts http://localhost:3010 as local callback URL.
+        strictPort: true,
+        {%- endif %}
     },
 });
 

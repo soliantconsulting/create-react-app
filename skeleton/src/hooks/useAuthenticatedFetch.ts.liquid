@@ -1,0 +1,102 @@
+{%- if features contains "auth0" -%}
+import { useAuth0 } from "@auth0/auth0-react";
+import { useCallback } from "react";
+
+export const useAuthenticatedFetch = (): typeof fetch => {
+    const { getAccessTokenSilently, loginWithRedirect } = useAuth0();
+
+    return useCallback(
+        async (input: RequestInfo | URL, init?: RequestInit) => {
+            let accessToken: string | undefined;
+
+            try {
+                accessToken = await getAccessTokenSilently();
+            } catch {
+                // Falls through to the login redirect below.
+            }
+
+            if (!accessToken) {
+                const { location } = window;
+                await loginWithRedirect({
+                    appState: {
+                        returnTo: `${location.pathname}${location.search}${location.hash}`,
+                    },
+                });
+                return new Promise(() => {
+                    // Will never resolve
+                });
+            }
+
+            const modifiedInit = init ?? {};
+            modifiedInit.headers = new Headers(modifiedInit.headers);
+            modifiedInit.headers.set("Authorization", `Bearer ${accessToken}`);
+
+            return await fetch(input, modifiedInit);
+        },
+        [getAccessTokenSilently, loginWithRedirect],
+    );
+};
+{%- endif %}
+{%- if features contains "cognito" -%}
+import type { User } from "oidc-client-ts";
+import { useCallback, useEffect, useRef } from "react";
+import { useAuth } from "react-oidc-context";
+
+// Renew tokens this close to expiry so they do not lapse in flight.
+const minTokenLifetimeSeconds = 60;
+
+export const useAuthenticatedFetch = (): typeof fetch => {
+    const { user, signinSilent, signinRedirect } = useAuth();
+    // A ref keeps the returned fetch stable while tokens renew in the background.
+    const userRef = useRef(user);
+    // Concurrent calls through this hook instance share one renewal.
+    const renewalRef = useRef<Promise<User | null> | null>(null);
+
+    useEffect(() => {
+        userRef.current = user;
+    }, [user]);
+
+    return useCallback(
+        async (input: RequestInfo | URL, init?: RequestInit) => {
+            const current = userRef.current;
+            let accessToken =
+                current &&
+                (current.expires_in ?? Number.POSITIVE_INFINITY) >= minTokenLifetimeSeconds
+                    ? current.access_token
+                    : null;
+
+            if (!accessToken) {
+                renewalRef.current ??= signinSilent().finally(() => {
+                    renewalRef.current = null;
+                });
+                // signinSilent resolves to null when the renewal fails. A token that has not
+                // expired yet still works, so a failed early renewal does not cost the user the
+                // page; AuthGuard retries it and handles a session that really ended.
+                const renewed = await renewalRef.current;
+                accessToken =
+                    renewed?.access_token ??
+                    (current && !current.expired ? current.access_token : null);
+            }
+
+            if (!accessToken) {
+                const { location } = window;
+                await signinRedirect({
+                    state: {
+                        returnTo: `${location.pathname}${location.search}${location.hash}`,
+                    },
+                });
+                return new Promise(() => {
+                    // Will never resolve
+                });
+            }
+
+            const modifiedInit = init ?? {};
+            modifiedInit.headers = new Headers(modifiedInit.headers);
+            modifiedInit.headers.set("Authorization", `Bearer ${accessToken}`);
+
+            return await fetch(input, modifiedInit);
+        },
+        [signinSilent, signinRedirect],
+    );
+};
+{%- endif %}

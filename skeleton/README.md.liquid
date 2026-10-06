@@ -23,3 +23,146 @@ This reads `.sld-dns-control.json`, finds the deployed stack's `DistributionDoma
 and upserts the CNAME via the DNS control API. Only needed once after the initial deploy;
 subsequent deploys keep the same CloudFront domain.
 {%- endif %}
+{%- if features contains "cognito" %}
+
+## Authentication (AWS Cognito)
+
+The CDK stack owns the Cognito user pool, the app client and the managed login domain
+(`{{cognitoSettings.domainPrefix}}-<env>.auth.{{awsEnv.region}}.amazoncognito.com`). Users are invited by an
+administrator; self sign-up is disabled.
+
+Deployed builds read the Cognito IDs from `/config.json`, which the stack writes at deploy time, so
+one build works for every environment.
+
+### Local development
+
+The staging app client also accepts `http://localhost:3010` as a callback URL. Copy the staging stack
+outputs into `.env`:
+
+```sh
+aws cloudformation describe-stacks --stack-name {{project.name}}-staging \
+    --query "Stacks[0].Outputs[?starts_with(OutputKey, 'Cognito')]" --output table
+```
+
+| Output | `.env` variable |
+|---|---|
+| `CognitoRegion` | `VITE_APP_COGNITO_REGION` |
+| `CognitoUserPoolId` | `VITE_APP_COGNITO_USER_POOL_ID` |
+| `CognitoClientId` | `VITE_APP_COGNITO_CLIENT_ID` |
+| `CognitoDomain` | `VITE_APP_COGNITO_DOMAIN` |
+{%- if features contains "cognito-admin" %}
+| `CognitoIdentityPoolId` | `VITE_APP_COGNITO_IDENTITY_POOL_ID` |
+| `CognitoMfaRequired` | `VITE_APP_COGNITO_MFA_REQUIRED` |
+{%- endif %}
+
+Tokens are stored in `localStorage`, the same as the Auth0 setup, so a session survives reloads
+and new tabs. The tradeoff is that any script running on the page can read them, so an XSS bug
+would expose them.
+
+### API
+
+The API verifies access tokens against the `CognitoIssuer` output and this app's `CognitoClientId`.
+{%- if features contains "cognito-admin" %}
+Administrators manage users in this app, so the API needs no access to the user pool.
+{%- else %}
+To manage users from the API, grant its role access to `CognitoUserPoolArn`.
+{%- endif %}
+
+### Roles
+
+Roles are Cognito groups. They appear in the `cognito:groups` claim of both the ID and the access
+token, which is what the API should authorize against.
+The stack creates one group, `admin`, in `cdk/src/cognito-auth.ts`. Add further groups next to it.
+{%- if features contains "cognito-admin" %}
+
+Administrators can add any user, themselves included, to any group. A group that carries an IAM
+role is therefore open to every administrator, so do not give a group more AWS access than you
+would give `admin`.
+{%- endif %}
+{%- if features contains "cognito-admin" %}
+
+### User administration
+
+Members of the `admin` group see an **Admin** link in the app bar. It opens `/admin`, where they can
+invite, edit, disable and delete users, reset passwords and MFA, assign roles, and see who has
+each role.
+
+There is no backend involved: the app exchanges the administrator's ID token at a Cognito identity
+pool for temporary AWS credentials and calls the Cognito API directly. Only the `admin` group is
+mapped to an IAM role, and that role may only manage this user pool. Everybody else is denied
+credentials.
+
+#### Lost authenticator
+
+When the pool requires MFA, users enroll an authenticator app at their first sign-in. Cognito does
+not list that authenticator on the user and has no call to clear it, so the user page shows
+"Required at sign-in" and **Reset MFA** stays disabled. To let someone who lost their device back
+in, delete the user and invite them again. They get a new user ID, so re-link any data your API
+keys on the old one.
+
+Administrators can set any user's password and change their email address, so they can take over
+any account in the pool. Only add people to `admin` whom you trust with that.
+
+Roles themselves are defined in CDK, next to the `admin` group in `cdk/src/cognito-auth.ts`; the
+admin UI cannot create, edit or delete them.
+{%- endif %}
+
+### First user
+
+Self sign-up is disabled, so the first user has to be created from the command line, after the
+first deploy:
+
+```sh
+USER_POOL_ID=<CognitoUserPoolId output>
+
+aws cognito-idp admin-create-user --user-pool-id "$USER_POOL_ID" \
+    --username admin@example.com \
+    --user-attributes Name=email,Value=admin@example.com Name=email_verified,Value=true \
+    --desired-delivery-mediums EMAIL
+
+aws cognito-idp admin-add-user-to-group --user-pool-id "$USER_POOL_ID" \
+    --username admin@example.com --group-name admin
+```
+
+{% if features contains "cognito-admin" -%}
+They receive an email with a temporary password and can manage everybody else from the app.
+{%- else -%}
+They receive an email with a temporary password. Leave out the second command for users who are
+not administrators. Further users are created the same way, or by your API.
+{%- endif %}
+
+### Login page branding
+
+The managed login pages use Cognito's default style with `src/assets/favicon.svg` as the logo (see
+`ManagedLoginBranding` in `cdk/src/cognito-auth.ts`). Cognito validates the SVG strictly and fails the
+deploy on attributes such as `version` and `xml:space`, so clean up a replacement logo first. To customize it further, edit the style in the
+Cognito console's branding editor, then export it and copy the `Settings` part of the output into
+the construct:
+
+```sh
+aws cognito-idp describe-managed-login-branding-by-client --user-pool-id <pool> \
+    --client-id <client> --return-merged-resources
+```
+
+### Emails
+
+The emails Cognito sends are HTML templates in `cdk/emails`, wrapped in the shared
+`layout.html` when the stack is synthesized:
+
+| Template | Sent for |
+|---|---|
+| `invitation.html` | New users invited by an administrator, and resent invitations |
+| `verification-code.html` | Forgot password, password resets started by an administrator, and confirming a changed email address |
+
+Cognito uses one template for all verification codes, so its wording has to fit every case.
+
+### Email delivery
+
+By default Cognito sends email itself, which is limited to 50 emails per day. Set `ses` in
+`cdk/src/env-*.ts` before going live.
+
+Verify the from address in SES first, or set `verifiedDomain` when its domain is already verified.
+Cognito drops invitations and password resets sent from an unverified identity, without an error.
+New AWS accounts start in the SES sandbox and can only email verified addresses, so request
+production access before inviting real users.
+{%- endif %}

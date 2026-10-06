@@ -22,6 +22,9 @@ import { BlockPublicAccess, Bucket } from "aws-cdk-lib/aws-s3";
 import { BucketDeployment, CacheControl, Source } from "aws-cdk-lib/aws-s3-deployment";
 import type { Construct } from "constructs";
 import { copySync } from "fs-extra/esm";
+{%- if features contains "cognito" %}
+import { CognitoAuth, type CognitoAuthProps } from "./cognito-auth.js";
+{%- endif %}
 
 type BuildEnv = {
     VITE_APP_API_ENDPOINT: string;
@@ -41,6 +44,9 @@ type AppStackProps = StackProps & {
     certificateArn: string;
     domainName: string;
     buildEnv: BuildEnv;
+    {%- if features contains "cognito" %}
+    cognito: Omit<CognitoAuthProps, "appDomainName">;
+    {%- endif %}
 };
 
 export class AppStack extends Stack {
@@ -84,6 +90,30 @@ export class AppStack extends Stack {
         });
 
         new CfnOutput(this, "DistributionDomainName", { value: distribution.domainName });
+        {%- if features contains "cognito" %}
+
+        const cognitoAuth = new CognitoAuth(this, "CognitoAuth", {
+            ...props.cognito,
+            appDomainName: props.domainName,
+        });
+
+        // Values for the VITE_APP_COGNITO_* variables in .env for local development.
+        new CfnOutput(this, "CognitoRegion", { value: cognitoAuth.runtimeConfig.region });
+        new CfnOutput(this, "CognitoUserPoolId", { value: cognitoAuth.runtimeConfig.userPoolId });
+        new CfnOutput(this, "CognitoClientId", { value: cognitoAuth.runtimeConfig.clientId });
+        new CfnOutput(this, "CognitoDomain", { value: cognitoAuth.runtimeConfig.domain });
+        // Values the API needs to verify tokens and manage users.
+        new CfnOutput(this, "CognitoIssuer", { value: cognitoAuth.userPool.userPoolProviderUrl });
+        new CfnOutput(this, "CognitoUserPoolArn", { value: cognitoAuth.userPool.userPoolArn });
+        {%- if features contains "cognito-admin" %}
+        new CfnOutput(this, "CognitoIdentityPoolId", {
+            value: cognitoAuth.runtimeConfig.identityPoolId,
+        });
+        new CfnOutput(this, "CognitoMfaRequired", {
+            value: String(cognitoAuth.runtimeConfig.mfaRequired),
+        });
+        {%- endif %}
+        {%- endif %}
 
         const sourcePath = fileURLToPath(new URL("../../", import.meta.url));
         const source = Source.asset(sourcePath, {
@@ -112,7 +142,16 @@ export class AppStack extends Stack {
             assetHashType: AssetHashType.OUTPUT,
         });
 
+        {% if features contains "cognito" -%}
+        const mutableFiles = [
+            "index.html",
+            "favicon.ico",
+            "manifest.webmanifest",
+            "config.json",
+        ];
+        {%- else -%}
         const mutableFiles = ["index.html", "favicon.ico", "manifest.webmanifest"];
+        {%- endif %}
 
         const deploymentLogGroup = new LogGroup(this, "DeploymentLogGroup", {
             retention: RetentionDays.ONE_WEEK,
@@ -135,7 +174,13 @@ export class AppStack extends Stack {
             exclude: ["*"],
             include: mutableFiles,
             cacheControl: [CacheControl.fromString("max-age=0,no-cache,no-store,must-revalidate")],
+            {%- if features contains "cognito" %}
+            // The Cognito IDs are only known at deploy time, so they are written as a runtime config
+            // rather than baked into the build.
+            sources: [source, Source.jsonData("config.json", cognitoAuth.runtimeConfig)],
+            {%- else %}
             sources: [source],
+            {%- endif %}
             memoryLimit: 1024,
         });
     }

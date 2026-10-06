@@ -17,7 +17,8 @@
     "create-react-app": "./dist/cli.js"
   },
   "scripts": {
-    "test-synth": "rm -rf ./test-synth && tsx ./src/test-cli.ts test-synth",
+    "test": "tsx --test 'test/**/*.test.ts'",
+    "test-synth": "tsx ./src/test-cli.ts",
     "build": "tsc",
     "format": "biome format . --write",
     "check": "biome check . --write"

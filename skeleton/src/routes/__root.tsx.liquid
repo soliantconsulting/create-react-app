@@ -1,14 +1,20 @@
 import { ErrorCard } from "#/components/ErrorCard.js";
 import { FullPageSpinner } from "#/components/FullPageSpinner.js";
+{%- if features contains "cognito" %}
+import { UserMenu } from "#/components/UserMenu.js";
+{%- endif %}
 import type { QueryOptionsFactory } from "#/queries/index.js";
 import { AppBar, Box, Container, Toolbar, Typography } from "@mui/material";
 import type { QueryClient } from "@tanstack/react-query";
-import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import { type ErrorComponentProps, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
 export type RootRouterContext = {
     queryClient: QueryClient;
     qof: QueryOptionsFactory;
+    {%- if features contains "cognito-admin" %}
+    isAdmin: boolean;
+    {%- endif %}
 };
 
 const Root = (): ReactNode => {
@@ -19,6 +25,9 @@ const Root = (): ReactNode => {
                     <Typography variant="h6" component="div">
                         {{project.title}}
                     </Typography>
+                    {%- if features contains "cognito" %}
+                    <UserMenu />
+                    {%- endif %}
                 </Toolbar>
             </AppBar>
             <Box component="main" sx={{ '{{' }} py: 2 }}>
@@ -28,13 +37,9 @@ const Root = (): ReactNode => {
     );
 };
 
-type RootErrorProps = {
-    error: Error;
-};
-
-const RootError = ({ error }: RootErrorProps): ReactNode => (
+const RootError = ({ error }: ErrorComponentProps): ReactNode => (
     <Container maxWidth="md" sx={{ '{{' }} my: 2 }}>
-        <ErrorCard error={error} />
+        <ErrorCard error={error instanceof Error ? error : new Error(String(error))} />
     </Container>
 );
 

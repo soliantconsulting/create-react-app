@@ -1,0 +1,73 @@
+import { z } from "zod/mini";
+
+const configSchema = z.object({
+    region: z.string().check(z.minLength(1)),
+    userPoolId: z.string().check(z.minLength(1)),
+    clientId: z.string().check(z.minLength(1)),
+    domain: z.url(),
+    {%- if features contains "cognito-admin" %}
+    identityPoolId: z.string().check(z.minLength(1)),
+    mfaRequired: z.boolean(),
+    {%- endif %}
+});
+
+export type Config = z.output<typeof configSchema>;
+
+let config: Config | null = null;
+
+const loadFromEnv = (): unknown => ({
+    region: import.meta.env.VITE_APP_COGNITO_REGION,
+    userPoolId: import.meta.env.VITE_APP_COGNITO_USER_POOL_ID,
+    clientId: import.meta.env.VITE_APP_COGNITO_CLIENT_ID,
+    domain: import.meta.env.VITE_APP_COGNITO_DOMAIN,
+    {%- if features contains "cognito-admin" %}
+    identityPoolId: import.meta.env.VITE_APP_COGNITO_IDENTITY_POOL_ID,
+    mfaRequired: import.meta.env.VITE_APP_COGNITO_MFA_REQUIRED === "true",
+    {%- endif %}
+});
+
+const loadFromServer = async (): Promise<unknown> => {
+    const response = await fetch("/config.json", { cache: "no-store" });
+
+    // CloudFront answers unknown paths with index.html (status 200) for client-side routing, so a
+    // missing config file shows up as a non-JSON response rather than a 404.
+    if (!(response.ok && response.headers.get("content-type")?.includes("json"))) {
+        throw new Error(`Failed to load /config.json (HTTP ${response.status})`);
+    }
+
+    return await response.json();
+};
+
+/**
+ * Loads the runtime configuration.
+ *
+ * Deployed builds fetch `/config.json`, which the CDK stack writes at deploy time. Local development
+ * reads the `VITE_APP_COGNITO_*` variables from `.env` instead.
+ */
+export const loadConfig = async (): Promise<void> => {
+    const rawConfig = import.meta.env.DEV ? loadFromEnv() : await loadFromServer();
+    const result = configSchema.safeParse(rawConfig);
+
+    if (!result.success) {
+        throw new Error(
+            import.meta.env.DEV
+                ? "Cognito configuration missing, fill in the VITE_APP_COGNITO_* variables in .env"
+                : "Invalid /config.json",
+        );
+    }
+
+    config = result.data;
+};
+
+export const getConfig = (): Config => {
+    if (!config) {
+        throw new Error("getConfig() called before loadConfig()");
+    }
+
+    return config;
+};
+
+export const getAuthority = (): string => {
+    const { region, userPoolId } = getConfig();
+    return `https://cognito-idp.${region}.amazonaws.com/${userPoolId}`;
+};

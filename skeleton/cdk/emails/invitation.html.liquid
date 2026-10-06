@@ -1,0 +1,45 @@
+<!-- Cognito fills in the username and password placeholders; the CDK stack fills in the app URL. -->
+<tr>
+    <td style="padding: 32px 32px 0;">
+        <h1 style="margin: 0 0 16px; font-size: 22px; font-weight: 500;">
+            Welcome to {{project.title | escape}}
+        </h1>
+        <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.5;">
+            An account has been created for you. Sign in with the details below; you will be
+            asked to choose a new password.
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding: 0 32px;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
+            style="background-color: #f4f5f7; border-radius: 6px;">
+            <tr>
+                <td style="padding: 16px; font-size: 14px;">
+                    <div style="color: #6b7280;">Username</div>
+                    <div style="margin-bottom: 12px; font-size: 16px; font-weight: 600;">
+                        {username}
+                    </div>
+                    <div style="color: #6b7280;">Temporary password</div>
+                    <div style="font-family: Consolas, Menlo, monospace; font-size: 16px; font-weight: 600;">
+                        {####}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td align="center" style="padding: 24px 32px;">
+        <a href="%APP_URL%"
+            style="display: inline-block; padding: 12px 24px; border-radius: 4px; background-color: #1976d2; color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none;">
+            Sign in
+        </a>
+    </td>
+</tr>
+<tr>
+    <td style="padding: 0 32px 32px; font-size: 13px; line-height: 1.5; color: #6b7280;">
+        The temporary password expires in 7 days. If the button does not work, open
+        <a href="%APP_URL%" style="color: #1976d2;">%APP_URL%</a>.
+    </td>
+</tr>
