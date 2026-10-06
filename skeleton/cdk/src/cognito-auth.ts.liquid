@@ -85,8 +85,6 @@ export class CognitoAuth extends Construct {
 
         const appUrl = `https://${props.appDomainName}`;
 
-        const mfa: Mfa = Mfa.{{ cognitoSettings.mfa | upcase }};
-
         const userPool = new UserPool(this, "UserPool", {
             // Required for managed login.
             featurePlan: FeaturePlan.ESSENTIALS,
@@ -101,7 +99,7 @@ export class CognitoAuth extends Construct {
                 givenName: { required: false, mutable: true },
                 familyName: { required: false, mutable: true },
             },
-            mfa,
+            mfa: Mfa.{{ cognitoSettings.mfa | upcase }},
             {%- if cognitoSettings.mfa != "off" %}
             // Managed login walks users through authenticator app setup only when MFA is required.
             mfaSecondFactor: { otp: true, sms: false },
@@ -324,7 +322,7 @@ export class CognitoAuth extends Construct {
             scope: scopes.map((scope) => scope.scopeName).join(" "),
             {%- if features contains "cognito-admin" %}
             identityPoolId: identityPool.identityPoolId,
-            mfaRequired: mfa === Mfa.REQUIRED,
+            mfaRequired: {% if cognitoSettings.mfa == "required" %}true{% else %}false{% endif %},
             {%- endif %}
         };
     }

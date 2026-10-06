@@ -3,7 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 {%- endif %}
 import type { ReactNode } from "react";
 {%- if features contains "cognito" %}
-import { ErrorResponse, ErrorTimeout } from "oidc-client-ts";
+import { ErrorResponse } from "oidc-client-ts";
 import { useEffect, useRef, useState } from "react";
 import { hasAuthParams, useAuth } from "react-oidc-context";
 {%- else %}
@@ -125,16 +125,13 @@ export const AuthGuard = ({ children }: Props): ReactNode => {
         signinRedirect,
     ]);
 
-    // oidc-client-ts only retries a failed automatic renewal after a timeout, so without this the
-    // renewal stops after a single network blip. Each failed attempt sets a new error, re-arming the
-    // retry until it succeeds, the session turns out to have ended, or the tokens expire.
+    // oidc-client-ts only retries an automatic renewal that timed out, and reports no error while it
+    // does. Every renewal error that does arrive here, a timeout of a manual renewal included, has
+    // nothing else retrying it, so without this the renewal stops after a single network blip. Each
+    // failed attempt sets a new error, re-arming the retry until it succeeds, the session turns out
+    // to have ended, or the tokens expire.
     useEffect(() => {
-        if (
-            mustSignIn ||
-            error === undefined ||
-            !silentSigninFailed ||
-            error.innerError instanceof ErrorTimeout
-        ) {
+        if (mustSignIn || error === undefined || !silentSigninFailed) {
             return;
         }
 

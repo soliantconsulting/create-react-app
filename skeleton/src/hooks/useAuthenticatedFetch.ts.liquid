@@ -49,7 +49,7 @@ export const useAuthenticatedFetch = (): typeof fetch => {
     const { user, signinSilent, signinRedirect } = useAuth();
     // A ref keeps the returned fetch stable while tokens renew in the background.
     const userRef = useRef(user);
-    // Concurrent calls share one renewal.
+    // Concurrent calls through this hook instance share one renewal.
     const renewalRef = useRef<Promise<User | null> | null>(null);
 
     useEffect(() => {
@@ -66,14 +66,16 @@ export const useAuthenticatedFetch = (): typeof fetch => {
                     : null;
 
             if (!accessToken) {
-                try {
-                    renewalRef.current ??= signinSilent().finally(() => {
-                        renewalRef.current = null;
-                    });
-                    accessToken = (await renewalRef.current)?.access_token ?? null;
-                } catch {
-                    accessToken = null;
-                }
+                renewalRef.current ??= signinSilent().finally(() => {
+                    renewalRef.current = null;
+                });
+                // signinSilent resolves to null when the renewal fails. A token that has not
+                // expired yet still works, so a failed early renewal does not cost the user the
+                // page; AuthGuard retries it and handles a session that really ended.
+                const renewed = await renewalRef.current;
+                accessToken =
+                    renewed?.access_token ??
+                    (current && !current.expired ? current.access_token : null);
             }
 
             if (!accessToken) {

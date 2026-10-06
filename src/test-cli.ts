@@ -9,7 +9,7 @@ import {
     runPipeline,
     type SentryContext,
 } from "@soliantconsulting/starter-lib";
-import type { Feature, FeaturesContext } from "./tasks/features.js";
+import type { Feature, FeaturesContext, MfaMode } from "./tasks/features.js";
 import type { StagingDomainContext } from "./tasks/staging-domain.js";
 import { synthTask } from "./tasks/synth.js";
 
@@ -21,11 +21,13 @@ type BaseContext = ProjectContext &
     SentryContext;
 
 const presets = {
-    none: [],
-    auth0: ["auth0"],
-    cognito: ["cognito"],
-    "cognito-admin": ["cognito", "cognito-admin"],
-} satisfies Record<string, Feature[]>;
+    none: { features: [] },
+    auth0: { features: ["auth0"] },
+    cognito: { features: ["cognito"] },
+    "cognito-admin": { features: ["cognito", "cognito-admin"] },
+    "cognito-admin-mfa-optional": { features: ["cognito", "cognito-admin"], mfa: "optional" },
+    "cognito-admin-mfa-off": { features: ["cognito", "cognito-admin"], mfa: "off" },
+} satisfies Record<string, { features: Feature[]; mfa?: MfaMode }>;
 
 const presetName = process.argv[2] ?? "auth0";
 
@@ -35,7 +37,8 @@ if (!Object.hasOwn(presets, presetName)) {
     );
 }
 
-const features = presets[presetName as keyof typeof presets];
+const preset: { features: Feature[]; mfa?: MfaMode } = presets[presetName as keyof typeof presets];
+const features = preset.features;
 const path = fileURLToPath(new URL(`../test-synth-${presetName}`, import.meta.url));
 
 await rm(path, { recursive: true, force: true });
@@ -69,7 +72,7 @@ await runPipeline({
         },
         features,
         cognitoSettings: features.some((feature) => feature === "cognito")
-            ? { domainPrefix: "test-synth-login", mfa: "required" }
+            ? { domainPrefix: "test-synth-login", mfa: preset.mfa ?? "required" }
             : null,
     } satisfies BaseContext,
 });

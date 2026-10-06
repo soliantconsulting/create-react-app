@@ -63,9 +63,13 @@ would expose them.
 ### API
 
 The API verifies access tokens against the `CognitoIssuer` output and this app's `CognitoClientId`.
-To manage users from the API, grant its role access to `CognitoUserPoolArn`. Set `apiIdentifier`
-in `cdk/src/env-*.ts` to add a resource server with an `access` scope, which the app then requests
-at sign-in.
+{%- if features contains "cognito-admin" %}
+Administrators manage users in this app, so the API needs no access to the user pool.
+{%- else %}
+To manage users from the API, grant its role access to `CognitoUserPoolArn`.
+{%- endif %}
+Set `apiIdentifier` in `cdk/src/env-*.ts` to add a resource server with an `access` scope, which
+the app then requests at sign-in.
 
 ### Roles
 
@@ -98,10 +102,12 @@ any account in the pool. Only add people to `admin` whom you trust with that.
 
 Roles themselves are defined in CDK, next to the `admin` group in `cdk/src/cognito-auth.ts`; the
 admin UI cannot create, edit or delete them.
+{%- endif %}
 
-### First administrator
+### First user
 
-The first administrator has to be created from the command line, after the first deploy:
+Self sign-up is disabled, so the first user has to be created from the command line, after the
+first deploy:
 
 ```sh
 USER_POOL_ID=<CognitoUserPoolId output>
@@ -115,7 +121,11 @@ aws cognito-idp admin-add-user-to-group --user-pool-id "$USER_POOL_ID" \
     --username admin@example.com --group-name admin
 ```
 
+{% if features contains "cognito-admin" -%}
 They receive an email with a temporary password and can manage everybody else from the app.
+{%- else -%}
+They receive an email with a temporary password. Leave out the second command for users who are
+not administrators. Further users are created the same way, or by your API.
 {%- endif %}
 
 ### Login page branding
