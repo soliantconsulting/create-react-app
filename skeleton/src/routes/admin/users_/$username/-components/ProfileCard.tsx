@@ -13,6 +13,7 @@ import {
 import type { ReactNode } from "react";
 import { ButtonLink } from "#/components/Link/index.js";
 import type { AdminUserDetails } from "#/queries/admin-user.js";
+import { getConfig } from "#/utils/config.js";
 
 const mfaLabels: Record<string, string> = {
     SOFTWARE_TOKEN_MFA: "Authenticator app",
@@ -50,7 +51,11 @@ export const ProfileCard = ({ user }: Props): ReactNode => {
             "MFA",
             user.mfaMethods.length > 0
                 ? user.mfaMethods.map((method) => mfaLabels[method] ?? method).join(", ")
-                : "Not set up",
+                : // Cognito does not list an authenticator enrolled at sign-in in a required-MFA pool,
+                  // and it cannot be reset: see "Lost authenticator" in the README.
+                  getConfig().mfaRequired
+                  ? "Required at sign-in"
+                  : "Not set up",
         ],
         ["Created", formatInstant(user.createdAt)],
         ["Last updated", formatInstant(user.updatedAt)],

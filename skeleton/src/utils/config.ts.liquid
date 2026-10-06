@@ -8,6 +8,7 @@ const configSchema = z.object({
     scope: z.string().check(z.minLength(1)),
     {%- if features contains "cognito-admin" %}
     identityPoolId: z.string().check(z.minLength(1)),
+    mfaRequired: z.boolean(),
     {%- endif %}
 });
 
@@ -23,6 +24,7 @@ const loadFromEnv = (): unknown => ({
     scope: import.meta.env.VITE_APP_COGNITO_SCOPE,
     {%- if features contains "cognito-admin" %}
     identityPoolId: import.meta.env.VITE_APP_COGNITO_IDENTITY_POOL_ID,
+    mfaRequired: import.meta.env.VITE_APP_COGNITO_MFA_REQUIRED === "true",
     {%- endif %}
 });
 

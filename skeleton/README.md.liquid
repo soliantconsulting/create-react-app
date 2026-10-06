@@ -53,6 +53,7 @@ aws cloudformation describe-stacks --stack-name {{project.name}}-staging \
 | `CognitoScope` | `VITE_APP_COGNITO_SCOPE` |
 {%- if features contains "cognito-admin" %}
 | `CognitoIdentityPoolId` | `VITE_APP_COGNITO_IDENTITY_POOL_ID` |
+| `CognitoMfaRequired` | `VITE_APP_COGNITO_MFA_REQUIRED` |
 {%- endif %}
 
 Tokens are stored in `localStorage`, the same as the Auth0 setup, so a session survives reloads
@@ -83,6 +84,14 @@ There is no backend involved: the app exchanges the administrator's ID token at 
 pool for temporary AWS credentials and calls the Cognito API directly. Only the `admin` group is
 mapped to an IAM role, and that role may only manage this user pool. Everybody else is denied
 credentials.
+
+#### Lost authenticator
+
+When the pool requires MFA, users enroll an authenticator app at their first sign-in. Cognito does
+not list that authenticator on the user and has no call to clear it, so the user page shows
+"Required at sign-in" and **Reset MFA** stays disabled. To let someone who lost their device back
+in, delete the user and invite them again. They get a new user ID, so re-link any data your API
+keys on the old one.
 
 Administrators can set any user's password and change their email address, so they can take over
 any account in the pool. Only add people to `admin` whom you trust with that.

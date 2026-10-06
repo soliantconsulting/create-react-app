@@ -110,6 +110,9 @@ export class AppStack extends Stack {
         new CfnOutput(this, "CognitoIdentityPoolId", {
             value: cognitoAuth.runtimeConfig.identityPoolId,
         });
+        new CfnOutput(this, "CognitoMfaRequired", {
+            value: String(cognitoAuth.runtimeConfig.mfaRequired),
+        });
         {%- endif %}
         {%- endif %}
 
