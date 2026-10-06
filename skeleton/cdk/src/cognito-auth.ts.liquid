@@ -12,9 +12,7 @@ import {
     UserPool,
     UserPoolClientIdentityProvider,
     UserPoolEmail,
-    {%- if features contains "cognito-admin" %}
     UserPoolGroup,
-    {%- endif %}
     VerificationEmailStyle,
 } from "aws-cdk-lib/aws-cognito";
 {%- if features contains "cognito-admin" %}
@@ -68,11 +66,13 @@ export type CognitoRuntimeConfig = {
     identityPoolId: string;
     {%- endif %}
 };
-{%- if features contains "cognito-admin" %}
 
+{%- if features contains "cognito-admin" %}
 // Group whose members may manage users. Must match `cognitoAdminGroupName` in the app.
-const cognitoAdminGroupName = "admin";
+{%- else %}
+// Group for administrators, for the API to authorize against.
 {%- endif %}
+const cognitoAdminGroupName = "admin";
 
 export class CognitoAuth extends Construct {
     public readonly runtimeConfig: CognitoRuntimeConfig;
@@ -294,17 +294,23 @@ export class CognitoAuth extends Construct {
                 resources: [userPool.userPoolArn],
             }),
         );
+        {%- endif %}
 
+        {%- if features contains "cognito-admin" %}
         // Not created via userPool.addGroup(): as a child of the user pool it would be part of the
         // identity pool's dependency on it, forming a cycle through the role.
+        {%- endif %}
         new UserPoolGroup(this, "CognitoAdminGroup", {
             userPool,
             groupName: cognitoAdminGroupName,
+            {%- if features contains "cognito-admin" %}
             description: "Can manage users",
             precedence: 0,
             role: cognitoAdminRole,
+            {%- else %}
+            description: "Administrators",
+            {%- endif %}
         });
-        {%- endif %}
 
         this.runtimeConfig = {
             region: Stack.of(this).region,
