@@ -50,7 +50,6 @@ aws cloudformation describe-stacks --stack-name {{project.name}}-staging \
 | `CognitoUserPoolId` | `VITE_APP_COGNITO_USER_POOL_ID` |
 | `CognitoClientId` | `VITE_APP_COGNITO_CLIENT_ID` |
 | `CognitoDomain` | `VITE_APP_COGNITO_DOMAIN` |
-| `CognitoScope` | `VITE_APP_COGNITO_SCOPE` |
 {%- if features contains "cognito-admin" %}
 | `CognitoIdentityPoolId` | `VITE_APP_COGNITO_IDENTITY_POOL_ID` |
 | `CognitoMfaRequired` | `VITE_APP_COGNITO_MFA_REQUIRED` |
@@ -68,14 +67,18 @@ Administrators manage users in this app, so the API needs no access to the user 
 {%- else %}
 To manage users from the API, grant its role access to `CognitoUserPoolArn`.
 {%- endif %}
-Set `apiIdentifier` in `cdk/src/env-*.ts` to add a resource server with an `access` scope, which
-the app then requests at sign-in.
 
 ### Roles
 
 Roles are Cognito groups. They appear in the `cognito:groups` claim of both the ID and the access
 token, which is what the API should authorize against.
 The stack creates one group, `admin`, in `cdk/src/cognito-auth.ts`. Add further groups next to it.
+{%- if features contains "cognito-admin" %}
+
+Administrators can add any user, themselves included, to any group. A group that carries an IAM
+role is therefore open to every administrator, so do not give a group more AWS access than you
+would give `admin`.
+{%- endif %}
 {%- if features contains "cognito-admin" %}
 
 ### User administration

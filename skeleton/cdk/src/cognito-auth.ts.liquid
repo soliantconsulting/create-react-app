@@ -8,7 +8,6 @@ import {
     ManagedLoginVersion,
     Mfa,
     OAuthScope,
-    ResourceServerScope,
     UserPool,
     UserPoolClientIdentityProvider,
     UserPoolEmail,
@@ -41,9 +40,6 @@ export type CognitoAuthProps = {
         // Set when the domain of `fromEmail` is verified in SES, so the address itself need not be.
         verifiedDomain?: string;
     };
-    // Identifier of the API this app calls, for example "https://api.example.com". Adds a resource
-    // server with an `access` scope and requests that scope at sign-in.
-    apiIdentifier?: string;
 };
 
 const readEmail = (name: string): string =>
@@ -61,7 +57,6 @@ export type CognitoRuntimeConfig = {
     userPoolId: string;
     clientId: string;
     domain: string;
-    scope: string;
     {%- if features contains "cognito-admin" %}
     identityPoolId: string;
     // Tells the admin UI that users enroll an authenticator at sign-in.
@@ -142,21 +137,6 @@ export class CognitoAuth extends Construct {
         this.userPool = userPool;
 
         const redirectUrls = [appUrl, ...(props.allowLocalhost ? ["http://localhost:3010"] : [])];
-        const scopes = [OAuthScope.OPENID, OAuthScope.EMAIL, OAuthScope.PROFILE];
-
-        if (props.apiIdentifier) {
-            const apiScope = new ResourceServerScope({
-                scopeName: "access",
-                scopeDescription: "Access the API",
-            });
-            const apiResourceServer = userPool.addResourceServer("ApiResourceServer", {
-                identifier: props.apiIdentifier,
-                // The name defaults to the identifier, and Cognito rejects a URL as a name.
-                userPoolResourceServerName: "API",
-                scopes: [apiScope],
-            });
-            scopes.push(OAuthScope.resourceServer(apiResourceServer, apiScope));
-        }
 
         const client = userPool.addClient("AppClient", {
             // Public SPA client: authorization code flow with PKCE.
@@ -173,7 +153,7 @@ export class CognitoAuth extends Construct {
             }),
             oAuth: {
                 flows: { authorizationCodeGrant: true },
-                scopes,
+                scopes: [OAuthScope.OPENID, OAuthScope.EMAIL, OAuthScope.PROFILE],
                 callbackUrls: redirectUrls,
                 logoutUrls: redirectUrls,
             },
@@ -301,6 +281,8 @@ export class CognitoAuth extends Construct {
         {%- if features contains "cognito-admin" %}
         // Not created via userPool.addGroup(): as a child of the user pool it would be part of the
         // identity pool's dependency on it, forming a cycle through the role.
+        // Administrators can add any user to any group, so a role on a further group is within
+        // reach of every administrator.
         {%- endif %}
         new UserPoolGroup(this, "CognitoAdminGroup", {
             userPool,
@@ -319,7 +301,6 @@ export class CognitoAuth extends Construct {
             userPoolId: userPool.userPoolId,
             clientId: client.userPoolClientId,
             domain: domain.baseUrl(),
-            scope: scopes.map((scope) => scope.scopeName).join(" "),
             {%- if features contains "cognito-admin" %}
             identityPoolId: identityPool.identityPoolId,
             mfaRequired: {% if cognitoSettings.mfa == "required" %}true{% else %}false{% endif %},

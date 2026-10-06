@@ -31,7 +31,6 @@ new AppStack(app, "{{project.name}}-production", {
         domainPrefix: "{{cognitoSettings.domainPrefix}}-production",
         // The address, or its domain via `verifiedDomain`, must be verified in SES first.
         // ses: { fromEmail: "no-reply@example.com", fromName: "{{project.title}}" },
-        // apiIdentifier: "https://api.example.com",
         allowLocalhost: false,
     },
     {%- endif %}
